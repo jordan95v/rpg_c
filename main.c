@@ -36,6 +36,7 @@ int main(int argc, char **argv)
         goto Quit;
 
     char image[100] = "assets/character/front1.png";
+    char facing[10];
     int i = 1;
 
     // Main loop.
@@ -58,22 +59,64 @@ int main(int argc, char **argv)
                 case SDLK_UP:
                     if (player->y > 0)
                         player->y--;
+                    strcpy(player->orientation, "n");
                     sprintf(image, "assets/character/back%d.png", i);
                     break;
+
                 case SDLK_DOWN:
                     if (player->y < map->height_map - 2)
                         player->y++;
+                    strcpy(player->orientation, "s");
                     sprintf(image, "assets/character/front%d.png", i);
                     break;
+
                 case SDLK_RIGHT:
                     if (player->x < map->width_map - 1)
                         player->x++;
+                    strcpy(player->orientation, "r");
                     sprintf(image, "assets/character/right%d.png", i);
                     break;
+
                 case SDLK_LEFT:
                     if (player->x > 0)
                         player->x--;
+                    strcpy(player->orientation, "l");
                     sprintf(image, "assets/character/left%d.png", i);
+                    break;
+
+                case SDLK_SPACE:
+                    switch (player->orientation[0])
+                    {
+                    case 'n':
+                        strcpy(facing, "back");
+                        break;
+
+                    case 's':
+                        strcpy(facing, "front");
+                        break;
+
+                    case 'r':
+                        strcpy(facing, "right");
+                        break;
+
+                    case 'l':
+                        strcpy(facing, "left");
+                        break;
+
+                    default:
+                        break;
+                    }
+
+                    for (int j = 1; j < 4; j++)
+                    {
+                        sprintf(image, "assets/character/%s_attack%d.png", facing, j);
+                        renderCharacter(window, player, image, map->tile_width, map->tile_height);
+                        SDL_UpdateWindowSurface(window);
+                        SDL_Delay(16);
+                    }
+                    sprintf(image, "assets/character/%s%d.png", facing, i);
+                    renderCharacter(window, player, image, map->tile_width, map->tile_height);
+                    continue;
                     break;
                 }
                 break;
@@ -81,6 +124,8 @@ int main(int argc, char **argv)
             default:
                 break;
             }
+
+            // This is used to determine which image to use.
             i++;
             if (i > 3)
                 i = 1;

@@ -24,4 +24,5 @@ void renderCharacter(SDL_Window *window, Entity *character, char *filename, int 
     dest.y = character->y * height;
     SDL_Surface *surface = loadImage(filename);
     SDL_BlitSurface(surface, NULL, SDL_GetWindowSurface(window), &dest);
+    SDL_FreeSurface(surface);
 }
