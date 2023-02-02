@@ -9,5 +9,5 @@ typedef struct
     int facing;
 } Entity;
 
-void renderCharacter(SDL_Window *window, Entity *character, int size, int shift);
+void renderCharacter(SDL_Window *window, Entity *character, int size, int y, int shift);
 Entity *createEntity(int x, int y, int health, char *filename);

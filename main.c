@@ -5,9 +5,9 @@
 #include "functions.h"
 
 #define DOWN 0
-#define RIGHT 1
-#define UP 2
-#define LEFT 3
+#define RIGHT 2
+#define UP 4
+#define LEFT 6
 
 int init(SDL_Window **window, int w, int h)
 {
@@ -34,7 +34,7 @@ int main(int argc, char **argv)
 {
     // Map and Tileset loading.
     Map *map = loadMap("map.txt");
-    Entity *player = createEntity(10, 7, 100, "assets/char2.png");
+    Entity *player = createEntity(10, 7, 100, "assets/char3.png");
 
     // Window creation.
     SDL_Window *window = NULL;
@@ -42,6 +42,7 @@ int main(int argc, char **argv)
         goto Quit;
 
     int i = 0;
+    int y = 0;
 
     // Main loop.
     while (1)
@@ -84,58 +85,46 @@ int main(int argc, char **argv)
                     player->facing = LEFT;
                     break;
 
-                    //     case SDLK_SPACE:
-                    //         switch (player->orientation[0])
-                    //         {
-                    //         case 'n':
-                    //             strcpy(facing, "back");
-                    //             break;
-
-                    //         case 's':
-                    //             strcpy(facing, "front");
-                    //             break;
-
-                    //         case 'r':
-                    //             strcpy(facing, "right");
-                    //             break;
-
-                    //         case 'l':
-                    //             strcpy(facing, "left");
-                    //             break;
-
-                    //         default:
-                    //             break;
-                    //         }
-
-                    //         for (int j = 1; j < 4; j++)
-                    //         {
-                    //             sprintf(image, "assets/character/%s_attack%d.png", facing, j);
-                    //             renderCharacter(window, player, image, map->tile_width, map->tile_height);
-                    //             SDL_UpdateWindowSurface(window);
-                    //             SDL_Delay(30);
-                    //         }
-                    //         sprintf(image, "assets/character/%s%d.png", facing, i);
-                    //         renderCharacter(window, player, image, map->tile_width, map->tile_height);
-                    //         continue;
-                    //         break;
-                    //     }
-                    //     break;
-
-                default:
+                case SDLK_SPACE:
+                    switch (player->facing)
+                    {
+                    case UP:
+                        y = 12;
+                        break;
+                    case DOWN:
+                        y = 8;
+                        break;
+                    case LEFT:
+                        y = 14;
+                        break;
+                    case RIGHT:
+                        y = 10;
+                        break;
+                    }
+                    for (int j = 0; j < 3; j++)
+                    {
+                        renderCharacter(window, player, map->tile_width, y, j);
+                        SDL_UpdateWindowSurface(window);
+                        SDL_Delay(16);
+                    }
+                    continue;
                     break;
                 }
+                break;
 
-                // This is used to determine which image to use.
-                i++;
-                if (i > 2)
-                    i = 0;
+            default:
+                break;
             }
-            // Render the map and the character.
-            renderMap(window, map);
-            renderCharacter(window, player, map->tile_width, i);
 
-            SDL_UpdateWindowSurface(window);
+            // This is used to determine which image to use.
+            i++;
+            if (i > 2)
+                i = 0;
         }
+        // Render the map and the character.
+        renderMap(window, map);
+        renderCharacter(window, player, map->tile_width, player->facing, i);
+        SDL_UpdateWindowSurface(window);
     }
 
 Quit:

@@ -13,19 +13,19 @@ Entity *createEntity(int x, int y, int health, char *filename)
     entity->y = y;
     entity->health = health;
     entity->tileset = loadImage(filename);
-    entity->facing = 3;
+    entity->facing = 0;
 
     return entity;
 }
 
-void renderCharacter(SDL_Window *window, Entity *character, int size, int shift)
+void renderCharacter(SDL_Window *window, Entity *character, int size, int y, int shift)
 {
     SDL_Rect src, dest;
 
-    src.w = size;
+    src.w = size * 3;
     src.h = size * 2;
-    src.y = 1;
-    src.x = size * (3 * character->facing + shift);
+    src.y = size * y;
+    src.x = size * (3 * shift);
 
     dest.x = character->x * size;
     dest.y = character->y * size;
