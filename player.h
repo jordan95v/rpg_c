@@ -2,8 +2,8 @@
 #include <SDL2/SDL_image.h>
 typedef struct
 {
-    int x;
-    int y;
+    float x;
+    float y;
     int health;
     char orientation[2];
 } Entity;

@@ -35,7 +35,8 @@ int main(int argc, char **argv)
     if (init(&window, map->width_map * map->tile_width, map->height_map * map->tile_height) != 0)
         goto Quit;
 
-    char image[100] = "assets/character/front.png";
+    char image[100] = "assets/character/front1.png";
+    int i = 1;
 
     // Main loop.
     while (1)
@@ -44,7 +45,6 @@ int main(int argc, char **argv)
         SDL_Event event;
         if (SDL_PollEvent(&event))
         {
-
             switch (event.type)
             {
             case SDL_QUIT:
@@ -58,22 +58,22 @@ int main(int argc, char **argv)
                 case SDLK_UP:
                     if (player->y > 0)
                         player->y--;
-                    strcpy(image, "assets/character/back.png");
+                    sprintf(image, "assets/character/back%d.png", i);
                     break;
                 case SDLK_DOWN:
                     if (player->y < map->height_map - 2)
                         player->y++;
-                    strcpy(image, "assets/character/front.png");
+                    sprintf(image, "assets/character/front%d.png", i);
                     break;
                 case SDLK_RIGHT:
                     if (player->x < map->width_map - 1)
                         player->x++;
-                    strcpy(image, "assets/character/right.png");
+                    sprintf(image, "assets/character/right%d.png", i);
                     break;
                 case SDLK_LEFT:
                     if (player->x > 0)
                         player->x--;
-                    strcpy(image, "assets/character/left.png");
+                    sprintf(image, "assets/character/left%d.png", i);
                     break;
                 }
                 break;
@@ -81,6 +81,9 @@ int main(int argc, char **argv)
             default:
                 break;
             }
+            i++;
+            if (i > 3)
+                i = 1;
         }
 
         // Render the map and the character.
