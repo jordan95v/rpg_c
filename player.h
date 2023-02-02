@@ -5,8 +5,9 @@ typedef struct
     float x;
     float y;
     int health;
-    char orientation[2];
+    SDL_Surface *tileset;
+    int facing;
 } Entity;
 
-void renderCharacter(SDL_Window *window, Entity *character, char *filename, int width, int height);
-Entity *createEntity(int x, int y, int health);
+void renderCharacter(SDL_Window *window, Entity *character, int size, int shift);
+Entity *createEntity(int x, int y, int health, char *filename);

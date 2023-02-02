@@ -4,7 +4,7 @@
 #include "player.h"
 #include "functions.h"
 
-Entity *createEntity(int x, int y, int health)
+Entity *createEntity(int x, int y, int health, char *filename)
 {
     Entity *entity = NULL;
     entity = malloc(sizeof(Entity));
@@ -12,17 +12,23 @@ Entity *createEntity(int x, int y, int health)
     entity->x = x;
     entity->y = y;
     entity->health = health;
-    strcpy(entity->orientation, "s");
+    entity->tileset = loadImage(filename);
+    entity->facing = 3;
 
     return entity;
 }
 
-void renderCharacter(SDL_Window *window, Entity *character, char *filename, int height, int width)
+void renderCharacter(SDL_Window *window, Entity *character, int size, int shift)
 {
-    SDL_Rect dest;
-    dest.x = character->x * width;
-    dest.y = character->y * height;
-    SDL_Surface *surface = loadImage(filename);
-    SDL_BlitSurface(surface, NULL, SDL_GetWindowSurface(window), &dest);
-    SDL_FreeSurface(surface);
+    SDL_Rect src, dest;
+
+    src.w = size;
+    src.h = size * 2;
+    src.y = 1;
+    src.x = size * (3 * character->facing + shift);
+
+    dest.x = character->x * size;
+    dest.y = character->y * size;
+
+    SDL_BlitSurface(character->tileset, &src, SDL_GetWindowSurface(window), &dest);
 }
