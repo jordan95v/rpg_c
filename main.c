@@ -34,7 +34,7 @@ int showMenu(SDL_Window *window)
 {
     SDL_Rect menu = {370, 250, 200, 50};
     SDL_Surface *backgroundMenu = loadImage("assets/menu.png");
-    SDL_Surface *backgroundBtn = SDL_LoadBMP("assets/button.bmp");
+    SDL_Surface *backgroundBtn = loadImage("assets/button.png");
 
     SDL_Event event;
     while (1)
@@ -67,7 +67,7 @@ int main(int argc, char **argv)
 {
     // Map and Tileset loading.
     Map *map = loadMap("map.txt");
-    Entity *player = createEntity(10, 7, 100, "assets/char3.png");
+    Entity *player = createEntity(10, 7, 100, "assets/char.png");
 
     // Window creation and everything SDL related.
     SDL_Window *window = NULL;
