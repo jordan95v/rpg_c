@@ -109,13 +109,13 @@ int main(int argc, char **argv)
                     break;
 
                 case SDLK_RIGHT:
-                    if (player->x < map->width_map - 1)
+                    if (player->x < map->width_map - 2)
                         player->x++;
                     player->facing = RIGHT;
                     break;
 
                 case SDLK_LEFT:
-                    if (player->x > 0)
+                    if (player->x > -1)
                         player->x--;
                     player->facing = LEFT;
                     break;
