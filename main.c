@@ -35,21 +35,57 @@ int main(int argc, char **argv)
     if (init(&window, map->width_map * map->tile_width, map->height_map * map->tile_height) != 0)
         goto Quit;
 
+    char image[100] = "assets/character/front.png";
+
     // Main loop.
-    SDL_Event event;
     while (1)
     {
-        SDL_Event e;
-        if (SDL_PollEvent(&e))
+        // Event management
+        SDL_Event event;
+        if (SDL_PollEvent(&event))
         {
-            if (e.type == SDL_KEYDOWN)
+
+            switch (event.type)
             {
-                printf("Leaving the program.\n");
+            case SDL_QUIT:
+                printf("[INFO] Leaving program.\n");
+                goto Quit;
+                break;
+
+            case SDL_KEYDOWN:
+                switch (event.key.keysym.sym)
+                {
+                case SDLK_UP:
+                    if (player->y > 0)
+                        player->y--;
+                    strcpy(image, "assets/character/back.png");
+                    break;
+                case SDLK_DOWN:
+                    if (player->y < map->height_map - 2)
+                        player->y++;
+                    strcpy(image, "assets/character/front.png");
+                    break;
+                case SDLK_RIGHT:
+                    if (player->x < map->width_map - 1)
+                        player->x++;
+                    strcpy(image, "assets/character/right.png");
+                    break;
+                case SDLK_LEFT:
+                    if (player->x > 0)
+                        player->x--;
+                    strcpy(image, "assets/character/left.png");
+                    break;
+                }
+                break;
+
+            default:
                 break;
             }
         }
+
+        // Render the map and the character.
         renderMap(window, map);
-        renderCharacter(window, player, map->tile_width, map->tile_height);
+        renderCharacter(window, player, image, map->tile_width, map->tile_height);
         SDL_UpdateWindowSurface(window);
     }
 

@@ -2,23 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include "map.h"
+#include "functions.h"
 
 #define CACHE_SIZE 5000
-
-void raise(char *error)
-{
-    printf("%s\n", error);
-    SDL_Quit();
-    exit(EXIT_FAILURE);
-}
-
-SDL_Surface *loadImage(char *filename)
-{
-    SDL_Surface *surface = IMG_Load(filename);
-    if (surface == NULL)
-        raise("Couldn't loading the tileset, check the filename.");
-    return surface;
-}
 
 void loadTileset(FILE *file, Map *map)
 {

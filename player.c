@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "player.h"
+#include "functions.h"
 
 Entity *createEntity(int x, int y, int health)
 {
@@ -16,11 +17,11 @@ Entity *createEntity(int x, int y, int health)
     return entity;
 }
 
-void renderCharacter(SDL_Window *window, Entity *character, int height, int width)
+void renderCharacter(SDL_Window *window, Entity *character, char *filename, int height, int width)
 {
     SDL_Rect dest;
     dest.x = character->x * width;
     dest.y = character->y * height;
-    SDL_Surface *surface = IMG_Load("assets/character/front.png");
+    SDL_Surface *surface = loadImage(filename);
     SDL_BlitSurface(surface, NULL, SDL_GetWindowSurface(window), &dest);
 }
