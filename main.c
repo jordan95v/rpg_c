@@ -1,6 +1,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include "map.h"
+#include "player.h"
 
 int init(SDL_Window **window, int w, int h)
 {
@@ -27,6 +28,7 @@ int main(int argc, char **argv)
 {
     // Map and Tileset loading.
     Map *map = loadMap("map.txt");
+    Entity *player = createEntity(10, 7, 100);
 
     // Window creation.
     SDL_Window *window = NULL;
@@ -47,6 +49,8 @@ int main(int argc, char **argv)
             }
         }
         renderMap(window, map);
+        renderCharacter(window, player, map->tile_width, map->tile_height);
+        SDL_UpdateWindowSurface(window);
     }
 
 Quit:

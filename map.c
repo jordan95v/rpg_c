@@ -1,5 +1,3 @@
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -111,7 +109,6 @@ void renderMap(SDL_Window *window, Map *map)
             dest.y = j * map->tile_height;
             tile_number = map->schema[i][j];
             SDL_BlitSurface(map->tileset, &(map->tiles[tile_number].rect), SDL_GetWindowSurface(window), &dest);
-            SDL_UpdateWindowSurface(window);
         }
     }
 }
