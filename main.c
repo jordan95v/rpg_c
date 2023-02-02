@@ -30,25 +30,60 @@ int init(SDL_Window **window, int w, int h)
     return 0;
 }
 
+int showMenu(SDL_Window *window)
+{
+    SDL_Rect menu = {370, 250, 200, 50};
+    SDL_Surface *backgroundMenu = loadImage("assets/menu.png");
+    SDL_Surface *backgroundBtn = SDL_LoadBMP("assets/button.bmp");
+
+    SDL_Event event;
+    while (1)
+    {
+        while (SDL_PollEvent(&event))
+        {
+            if (event.type == SDL_QUIT)
+            {
+                return -1;
+            }
+            if (event.type == SDL_MOUSEBUTTONDOWN)
+            {
+                int x, y;
+                SDL_GetMouseState(&x, &y);
+                if (x >= menu.x && x <= menu.x + menu.w && y >= menu.y && y <= menu.y + menu.h)
+                {
+                    SDL_FreeSurface(backgroundMenu);
+                    SDL_FreeSurface(backgroundBtn);
+                    return 0;
+                }
+            }
+        }
+        SDL_BlitSurface(backgroundMenu, NULL, SDL_GetWindowSurface(window), NULL);
+        SDL_BlitSurface(backgroundBtn, NULL, SDL_GetWindowSurface(window), &menu);
+        SDL_UpdateWindowSurface(window);
+    }
+}
+
 int main(int argc, char **argv)
 {
     // Map and Tileset loading.
     Map *map = loadMap("map.txt");
     Entity *player = createEntity(10, 7, 100, "assets/char3.png");
 
-    // Window creation.
+    // Window creation and everything SDL related.
     SDL_Window *window = NULL;
     if (init(&window, map->width_map * map->tile_width, map->height_map * map->tile_height) != 0)
         goto Quit;
 
-    int i = 0;
-    int y = 0;
+    if (showMenu(window) != 0)
+        goto Quit;
+
+    int i, y = 0;
 
     // Main loop.
+    SDL_Event event;
     while (1)
     {
         // Event management
-        SDL_Event event;
         if (SDL_PollEvent(&event))
         {
             switch (event.type)
@@ -125,6 +160,7 @@ int main(int argc, char **argv)
         renderMap(window, map);
         renderCharacter(window, player, map->tile_width, player->facing, i);
         SDL_UpdateWindowSurface(window);
+        SDL_Delay(16);
     }
 
 Quit:
