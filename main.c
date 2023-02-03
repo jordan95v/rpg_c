@@ -97,25 +97,25 @@ int main(int argc, char **argv)
                 switch (event.key.keysym.sym)
                 {
                 case SDLK_UP:
-                    if (player->y > 0)
+                    if (player->y > 0 && checkMove(map, player->x, player->y - 1))
                         player->y--;
                     player->facing = UP;
                     break;
 
                 case SDLK_DOWN:
-                    if (player->y < map->height_map - 2)
+                    if (player->y < map->height_map - 2 && checkMove(map, player->x, player->y + 1))
                         player->y++;
                     player->facing = DOWN;
                     break;
 
                 case SDLK_RIGHT:
-                    if (player->x < map->width_map - 2 && checkMove(map, player->x, player->y))
+                    if (player->x < map->width_map - 2 && checkMove(map, player->x + 1, player->y))
                         player->x++;
                     player->facing = RIGHT;
                     break;
 
                 case SDLK_LEFT:
-                    if (player->x > -1)
+                    if (player->x > 0 && checkMove(map, player->x - 1, player->y))
                         player->x--;
                     player->facing = LEFT;
                     break;
