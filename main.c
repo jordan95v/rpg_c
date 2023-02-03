@@ -5,9 +5,9 @@
 #include "functions.h"
 
 #define DOWN 0
-#define RIGHT 2
-#define UP 4
-#define LEFT 6
+#define RIGHT 1
+#define UP 2
+#define LEFT 3
 
 int init(SDL_Window **window, int w, int h)
 {
@@ -124,21 +124,21 @@ int main(int argc, char **argv)
                     switch (player->facing)
                     {
                     case UP:
-                        y = 12;
+                        y = 6;
                         break;
                     case DOWN:
-                        y = 8;
+                        y = 2;
                         break;
                     case LEFT:
-                        y = 14;
+                        y = 8;
                         break;
                     case RIGHT:
-                        y = 10;
+                        y = 4;
                         break;
                     }
                     for (int j = 0; j < 3; j++)
                     {
-                        renderCharacter(window, player, map->tile_width, y, j);
+                        renderCharacter(window, player, map->tile_width, y, j, "attack");
                         SDL_UpdateWindowSurface(window);
                         SDL_Delay(16);
                     }
@@ -158,7 +158,7 @@ int main(int argc, char **argv)
         }
         // Render the map and the character.
         renderMap(window, map);
-        renderCharacter(window, player, map->tile_width, player->facing, i);
+        renderCharacter(window, player, map->tile_width, 0, i, "normal");
         SDL_UpdateWindowSurface(window);
         SDL_Delay(16);
     }

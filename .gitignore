@@ -3,3 +3,4 @@ main
 learn.c
 *.o
 t.c
+main.py
