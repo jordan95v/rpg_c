@@ -109,7 +109,7 @@ int main(int argc, char **argv)
                     break;
 
                 case SDLK_RIGHT:
-                    if (player->x < map->width_map - 2)
+                    if (player->x < map->width_map - 2 && checkMove(map, player->x, player->y))
                         player->x++;
                     player->facing = RIGHT;
                     break;

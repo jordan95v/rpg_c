@@ -110,3 +110,11 @@ int freeMap(Map *map)
     free(map);
     return 0;
 }
+
+int checkMove(Map *map, int x, int y)
+{
+    int number = map->schema[x][y];
+    if (map->tiles[number].full != 1)
+        return 1;
+    return 0;
+}
