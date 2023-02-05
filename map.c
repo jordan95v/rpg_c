@@ -143,8 +143,8 @@ int freeMap(Map *map)
 
 int checkMove(Map *map, int x, int y)
 {
-    int exclude[6] = {308, 306, 289, 290, 288, 346};
-    if (map->layers[0].schema[x][y] == 72)
+    int exclude[6] = {146, 128, 151, 129, 130, 144};
+    if (map->layers[0].schema[x][y] == 25)
     {
         for (int i = 0; i < 6; i++)
         {

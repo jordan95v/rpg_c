@@ -67,7 +67,7 @@ int main(int argc, char **argv)
 {
     // Map and Tileset loading.
     Map *map = loadMap("maps/main/map.txt");
-    Entity *player = createEntity(10, 7, 100, "assets/char4.png");
+    Entity *player = createEntity(10, 7, 100, "assets/char.png");
 
     // Window creation and everything SDL related.
     SDL_Window *window = NULL;
