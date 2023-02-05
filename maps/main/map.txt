@@ -3,7 +3,8 @@ assets/tileset2.png
 18 26
 #level
 38 26
-maps/main/house_top.txt
+maps/main/dead_zone.txt
+maps/main/floor.txt
 maps/main/main.txt
 maps/main/objects.txt
 #end

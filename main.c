@@ -66,7 +66,7 @@ int showMenu(SDL_Window *window)
 int main(int argc, char **argv)
 {
     // Map and Tileset loading.
-    Map *map = loadMap("maps/house/map.txt");
+    Map *map = loadMap("maps/main/map.txt");
     Entity *player = createEntity(10, 7, 100, "assets/char4.png");
 
     // Window creation and everything SDL related.
@@ -97,23 +97,23 @@ int main(int argc, char **argv)
                 switch (event.key.keysym.sym)
                 {
                 case SDLK_UP:
-                    if (player->y > 0)
+                    if (player->y > 0 && checkMove(map, player->x, player->y - 1))
                         player->y--;
                     break;
 
                 case SDLK_DOWN:
-                    if (player->y < map->height_map - 2)
+                    if (player->y < map->height_map - 1 && checkMove(map, player->x, player->y + 1))
                         player->y++;
                     break;
 
                 case SDLK_RIGHT:
-                    if (player->x < map->width_map - 2)
+                    if (player->x < map->width_map - 1 && checkMove(map, player->x + 1, player->y))
                         player->x++;
                     player->facing = RIGHT;
                     break;
 
                 case SDLK_LEFT:
-                    if (player->x > 0)
+                    if (player->x > 0 && checkMove(map, player->x - 1, player->y))
                         player->x--;
                     player->facing = LEFT;
                     break;
@@ -129,21 +129,21 @@ int main(int argc, char **argv)
                     break;
                 }
 
-                // This is used to determine which image to use.
-                i++;
-                if (i > 7)
-                    i = 0;
-                break;
-
             default:
                 break;
             }
         }
+
+        // This is used to determine which image to use.
+        i++;
+        if (i > 7)
+            i = 0;
+
         // Render the map and the character.
         renderMap(window, map);
-        renderCharacter(window, player, map->tile_width, 0, i, "normal");
+        renderCharacter(window, player, map->tile_width, 1, i, "normal");
         SDL_UpdateWindowSurface(window);
-        SDL_Delay(16);
+        SDL_Delay(40);
     }
 
 Quit:

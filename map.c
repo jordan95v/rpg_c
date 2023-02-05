@@ -71,7 +71,7 @@ void loadMapLevel(FILE *file, Map *map)
             break;
         else
         {
-            map->layers = (Layer *)realloc(map->layers, sizeof(Layer) * i);
+            map->layers = (Layer *)realloc(map->layers, sizeof(Layer) * i + 1);
             loadLayer(map_file, map, i);
             i++;
         }
@@ -90,6 +90,7 @@ Map *loadMap(const char *level)
         raise("Cannot find the file.");
 
     map = malloc(sizeof(Map));
+    map->number_of_layer = 0;
 
     while (fgets(buffer, CACHE_SIZE, file) != NULL)
     {
@@ -140,10 +141,18 @@ int freeMap(Map *map)
     return 0;
 }
 
-// int checkMove(Map *map, int x, int y)
-// {
-//     int number = map->schema[x][y];
-//     if (map->tiles[number].full != 1)
-//         return 1;
-//     return 0;
-// }
+int checkMove(Map *map, int x, int y)
+{
+    int exclude[6] = {308, 306, 289, 290, 288, 346};
+    if (map->layers[0].schema[x][y] == 72)
+    {
+        for (int i = 0; i < 6; i++)
+        {
+            if (map->layers[2].schema[x][y] == exclude[i])
+                return 0;
+        }
+
+        return 1;
+    }
+    return 0;
+}

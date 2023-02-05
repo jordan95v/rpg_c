@@ -1,8 +1,0 @@
-#tileset
-assets/tileset2.png
-18 26
-#level
-38 26
-maps/house/house_top.txt
-maps/house/main.txt
-#end
