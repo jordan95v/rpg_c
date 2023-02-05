@@ -1,13 +1,13 @@
+#include <stdio.h>
+#include <stdlib.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include "map.h"
 #include "player.h"
 #include "functions.h"
 
-#define DOWN 0
-#define RIGHT 1
-#define UP 2
-#define LEFT 3
+#define RIGHT 0
+#define LEFT 8
 
 int init(SDL_Window **window, int w, int h)
 {
@@ -66,16 +66,16 @@ int showMenu(SDL_Window *window)
 int main(int argc, char **argv)
 {
     // Map and Tileset loading.
-    Map *map = loadMap("map.txt");
-    Entity *player = createEntity(10, 7, 100, "assets/char.png");
+    Map *map = loadMap("maps/house/map.txt");
+    Entity *player = createEntity(10, 7, 100, "assets/char4.png");
 
     // Window creation and everything SDL related.
     SDL_Window *window = NULL;
     if (init(&window, map->width_map * map->tile_width, map->height_map * map->tile_height) != 0)
         goto Quit;
 
-    if (showMenu(window) != 0)
-        goto Quit;
+    // if (showMenu(window) != 0)
+    //     goto Quit;
 
     int i, y = 0;
 
@@ -97,64 +97,47 @@ int main(int argc, char **argv)
                 switch (event.key.keysym.sym)
                 {
                 case SDLK_UP:
-                    if (player->y > 0 && checkMove(map, player->x, player->y - 1))
+                    if (player->y > 0)
                         player->y--;
-                    player->facing = UP;
                     break;
 
                 case SDLK_DOWN:
-                    if (player->y < map->height_map - 2 && checkMove(map, player->x, player->y + 1))
+                    if (player->y < map->height_map - 2)
                         player->y++;
-                    player->facing = DOWN;
                     break;
 
                 case SDLK_RIGHT:
-                    if (player->x < map->width_map - 2 && checkMove(map, player->x + 1, player->y))
+                    if (player->x < map->width_map - 2)
                         player->x++;
                     player->facing = RIGHT;
                     break;
 
                 case SDLK_LEFT:
-                    if (player->x > 0 && checkMove(map, player->x - 1, player->y))
+                    if (player->x > 0)
                         player->x--;
                     player->facing = LEFT;
                     break;
 
                 case SDLK_SPACE:
-                    switch (player->facing)
-                    {
-                    case UP:
-                        y = 6;
-                        break;
-                    case DOWN:
-                        y = 2;
-                        break;
-                    case LEFT:
-                        y = 8;
-                        break;
-                    case RIGHT:
-                        y = 4;
-                        break;
-                    }
-                    for (int j = 0; j < 3; j++)
+                    for (int j = 0; j < 8; j++)
                     {
                         renderCharacter(window, player, map->tile_width, y, j, "attack");
-                        SDL_UpdateWindowSurface(window);
                         SDL_Delay(16);
+                        SDL_UpdateWindowSurface(window);
                     }
                     continue;
                     break;
                 }
+
+                // This is used to determine which image to use.
+                i++;
+                if (i > 7)
+                    i = 0;
                 break;
 
             default:
                 break;
             }
-
-            // This is used to determine which image to use.
-            i++;
-            if (i > 2)
-                i = 0;
         }
         // Render the map and the character.
         renderMap(window, map);

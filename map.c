@@ -9,7 +9,7 @@
 void loadTileset(FILE *file, Map *map)
 {
     int numtile, i, j, width, height;
-    char buffer[CACHE_SIZE], secondBuffer[CACHE_SIZE];
+    char buffer[CACHE_SIZE];
 
     fscanf(file, "%s", buffer);
     map->tileset = loadImage(buffer);
@@ -17,33 +17,28 @@ void loadTileset(FILE *file, Map *map)
     fscanf(file, "%d %d", &map->x_tiles, &map->y_tiles);
     map->tile_width = map->tileset->w / map->x_tiles;
     map->tile_height = map->tileset->h / map->y_tiles;
-    map->tiles = malloc(map->x_tiles * map->y_tiles * sizeof(Tile));
+    map->tiles = malloc(map->x_tiles * map->y_tiles * sizeof(SDL_Rect));
 
     for (j = 0, numtile = 0; j < map->y_tiles; j++)
     {
         for (i = 0; i < map->x_tiles; i++, numtile++)
         {
-            map->tiles[numtile].rect.w = map->tile_width;
-            map->tiles[numtile].rect.h = map->tile_height;
-            map->tiles[numtile].rect.x = i * map->tile_width;
-            map->tiles[numtile].rect.y = j * map->tile_height;
-
-            fscanf(file, "%s %s", buffer, secondBuffer);
-            map->tiles[numtile].full = 0;
-            if (strcmp(secondBuffer, "full") == 0)
-                map->tiles[numtile].full = 1;
+            map->tiles[numtile].w = map->tile_width;
+            map->tiles[numtile].h = map->tile_height;
+            map->tiles[numtile].x = i * map->tile_width;
+            map->tiles[numtile].y = j * map->tile_height;
         }
     }
 }
 
-void loadMapLevel(FILE *file, Map *map)
+void loadLayer(FILE *file, Map *map, int index)
 {
     int i, j, tmp;
-    fscanf(file, "%d %d", &map->width_map, &map->height_map);
-    map->schema = malloc(map->width_map * sizeof(char *));
+    map->number_of_layer++;
+    map->layers[index].schema = malloc(map->width_map * sizeof(int *));
 
     for (i = 0; i < map->width_map; i++)
-        map->schema[i] = malloc(map->height_map * sizeof(char));
+        map->layers[index].schema[i] = malloc(map->height_map * sizeof(int));
 
     for (j = 0; j < map->height_map; j++)
     {
@@ -52,8 +47,35 @@ void loadMapLevel(FILE *file, Map *map)
             fscanf(file, "%d", &tmp);
             if (tmp >= map->x_tiles * map->y_tiles)
                 raise("Tile out of map. Check your map array.");
-            map->schema[i][j] = tmp;
+            map->layers[index].schema[i][j] = tmp;
         }
+    }
+}
+
+void loadMapLevel(FILE *file, Map *map)
+{
+    int i = 0;
+    char buffer[CACHE_SIZE];
+    FILE *map_file;
+
+    fgets(buffer, CACHE_SIZE, file);
+    sscanf(buffer, "%d %d", &map->width_map, &map->height_map);
+
+    while (fgets(buffer, CACHE_SIZE, file) != NULL)
+    {
+        // Remove the \n after the file name, weird cause it work with the tileset :/
+        strcpy(buffer, strtok(buffer, "\n"));
+
+        map_file = fopen(buffer, "r");
+        if (!map_file)
+            break;
+        else
+        {
+            map->layers = (Layer *)realloc(map->layers, sizeof(Layer) * i);
+            loadLayer(map_file, map, i);
+            i++;
+        }
+        fclose(map_file);
     }
 }
 
@@ -69,14 +91,13 @@ Map *loadMap(const char *level)
 
     map = malloc(sizeof(Map));
 
-    do
+    while (fgets(buffer, CACHE_SIZE, file) != NULL)
     {
-        fgets(buffer, CACHE_SIZE, file);
-        if (strcmp(buffer, "#tileset\n") == 0)
+        if (strstr(buffer, "#tileset"))
             loadTileset(file, map);
-        if (strcmp(buffer, "#level\n") == 0)
+        else if (strstr(buffer, "#level"))
             loadMapLevel(file, map);
-    } while (strcmp(buffer, "#fin") != 0);
+    }
     fclose(file);
 
     return map;
@@ -84,37 +105,45 @@ Map *loadMap(const char *level)
 
 void renderMap(SDL_Window *window, Map *map)
 {
-    int i, j, tile_number;
+    int i, j, layer_number, tile_number;
     SDL_Rect dest;
 
-    for (i = 0; i < map->width_map; i++)
+    for (layer_number = 0; layer_number < map->number_of_layer; layer_number++)
     {
-        for (j = 0; j < map->height_map; j++)
+        for (i = 0; i < map->width_map; i++)
         {
-            dest.x = i * map->tile_width;
-            dest.y = j * map->tile_height;
-            tile_number = map->schema[i][j];
-            SDL_BlitSurface(map->tileset, &(map->tiles[tile_number].rect), SDL_GetWindowSurface(window), &dest);
+            for (j = 0; j < map->height_map; j++)
+            {
+                dest.x = i * map->tile_width;
+                dest.y = j * map->tile_height;
+                tile_number = map->layers[layer_number].schema[i][j];
+                SDL_BlitSurface(map->tileset, &(map->tiles[tile_number]), SDL_GetWindowSurface(window), &dest);
+            }
         }
     }
 }
 
 int freeMap(Map *map)
 {
-    int i;
+    int i, j;
     SDL_FreeSurface(map->tileset);
-    for (i = 0; i < map->height_map; i++)
-        free(map->schema[i]);
-    free(map->schema);
+    for (i = 0; i < map->number_of_layer; i++)
+    {
+        for (j = 0; j < map->height_map; j++)
+        {
+            free(map->layers[i].schema[j]);
+        }
+    }
+    free(map->layers);
     free(map->tiles);
     free(map);
     return 0;
 }
 
-int checkMove(Map *map, int x, int y)
-{
-    int number = map->schema[x][y];
-    if (map->tiles[number].full != 1)
-        return 1;
-    return 0;
-}
+// int checkMove(Map *map, int x, int y)
+// {
+//     int number = map->schema[x][y];
+//     if (map->tiles[number].full != 1)
+//         return 1;
+//     return 0;
+// }

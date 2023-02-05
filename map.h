@@ -2,9 +2,8 @@
 
 typedef struct
 {
-    SDL_Rect rect;
-    int full;
-} Tile;
+    int **schema;
+} Layer;
 
 typedef struct
 {
@@ -13,8 +12,9 @@ typedef struct
     int x_tiles;
     int y_tiles;
     SDL_Surface *tileset;
-    Tile *tiles;
-    unsigned char **schema;
+    SDL_Rect *tiles;
+    Layer *layers;
+    int number_of_layer;
     int width_map;
     int height_map;
 } Map;

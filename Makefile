@@ -1,4 +1,4 @@
-EXE=main
+EXE=prog
 CC=gcc
 
 $(EXE): main.o map.o player.o functions.o
