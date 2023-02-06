@@ -36,3 +36,9 @@ void renderCharacter(SDL_Window *window, Entity *character, int size, int y, int
 
     SDL_BlitSurface(character->tileset, &src, SDL_GetWindowSurface(window), &dest);
 }
+
+void freePlayer(Entity *entity)
+{
+    SDL_FreeSurface(entity->tileset);
+    free(entity);
+}

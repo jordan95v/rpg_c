@@ -81,69 +81,67 @@ int main(int argc, char **argv)
 
     // Main loop.
     SDL_Event event;
-    while (1)
+    for (i = 0;; i++)
     {
         // Event management
-        if (SDL_PollEvent(&event))
+        SDL_WaitEvent(&event);
+
+        switch (event.type)
         {
-            switch (event.type)
+        case SDL_QUIT:
+            printf("[INFO] Leaving program.\n");
+            goto Quit;
+            break;
+
+        case SDL_KEYDOWN:
+            switch (event.key.keysym.sym)
             {
-            case SDL_QUIT:
-                printf("[INFO] Leaving program.\n");
-                goto Quit;
+            case SDLK_UP:
+                if (player->y > 0 && checkMove(map, player->x, player->y - 1))
+                    player->y--;
                 break;
 
-            case SDL_KEYDOWN:
-                switch (event.key.keysym.sym)
+            case SDLK_DOWN:
+                if (player->y < map->height_map - 1 && checkMove(map, player->x, player->y + 1))
+                    player->y++;
+                break;
+
+            case SDLK_RIGHT:
+                if (player->x < map->width_map - 1 && checkMove(map, player->x + 1, player->y))
+                    player->x++;
+                player->facing = RIGHT;
+                break;
+
+            case SDLK_LEFT:
+                if (player->x > 0 && checkMove(map, player->x - 1, player->y))
+                    player->x--;
+                player->facing = LEFT;
+                break;
+
+            case SDLK_SPACE:
+                for (int j = 0; j < 8; j++)
                 {
-                case SDLK_UP:
-                    if (player->y > 0 && checkMove(map, player->x, player->y - 1))
-                        player->y--;
-                    break;
-
-                case SDLK_DOWN:
-                    if (player->y < map->height_map - 1 && checkMove(map, player->x, player->y + 1))
-                        player->y++;
-                    break;
-
-                case SDLK_RIGHT:
-                    if (player->x < map->width_map - 1 && checkMove(map, player->x + 1, player->y))
-                        player->x++;
-                    player->facing = RIGHT;
-                    break;
-
-                case SDLK_LEFT:
-                    if (player->x > 0 && checkMove(map, player->x - 1, player->y))
-                        player->x--;
-                    player->facing = LEFT;
-                    break;
-
-                case SDLK_SPACE:
-                    for (int j = 0; j < 8; j++)
-                    {
-                        renderCharacter(window, player, map->tile_width, y, j, "attack");
-                        SDL_Delay(16);
-                        SDL_UpdateWindowSurface(window);
-                    }
-                    continue;
-                    break;
+                    renderCharacter(window, player, map->tile_width, y, j, "attack");
+                    SDL_Delay(16);
+                    SDL_UpdateWindowSurface(window);
                 }
-
-            default:
+                continue;
                 break;
             }
+
+        default:
+            break;
         }
 
         // This is used to determine which image to use.
-        i++;
         if (i > 7)
             i = 0;
 
         // Render the map and the character.
         renderMap(window, map);
         renderCharacter(window, player, map->tile_width, 1, i, "normal");
+        SDL_Delay(16);
         SDL_UpdateWindowSurface(window);
-        SDL_Delay(40);
     }
 
 Quit:
@@ -153,6 +151,7 @@ Quit:
 
     // Free the map struct and exit gracefully.
     freeMap(map);
+    freePlayer(player);
     SDL_Quit();
     return 0;
 }

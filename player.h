@@ -11,3 +11,4 @@ typedef struct
 
 void renderCharacter(SDL_Window *window, Entity *character, int size, int y, int shift, char *mode);
 Entity *createEntity(int x, int y, int health, char *filename);
+void freePlayer(Entity *character);
