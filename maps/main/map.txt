@@ -3,6 +3,7 @@ assets/tile_set.png
 16 37
 #level
 38 26
+25
 maps/main/dead_zone.txt
 maps/main/floor.txt
 maps/main/main.txt

@@ -17,6 +17,7 @@ typedef struct
     int number_of_layer;
     int width_map;
     int height_map;
+    int dead_zone_number;
 } Map;
 
 Map *loadMap(const char *level);

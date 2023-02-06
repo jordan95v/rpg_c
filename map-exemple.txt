@@ -1,0 +1,9 @@
+#tileset
+assets/tile_set.png
+x y                             # x is the width and y is the height
+#level
+x y                             # x is the width and y is the height
+...                             # enter here the number of the dead zone tile
+maps/main/xxx.txt               # list all the layers here
+...
+#end

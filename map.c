@@ -58,8 +58,13 @@ void loadMapLevel(FILE *file, Map *map)
     char buffer[CACHE_SIZE];
     FILE *map_file;
 
+    // Gets the width and the height of the map.
     fgets(buffer, CACHE_SIZE, file);
     sscanf(buffer, "%d %d", &map->width_map, &map->height_map);
+
+    // Gets the dead zone tile number.
+    fgets(buffer, CACHE_SIZE, file);
+    sscanf(buffer, "%d", &map->dead_zone_number);
 
     while (fgets(buffer, CACHE_SIZE, file) != NULL)
     {
@@ -143,7 +148,7 @@ int freeMap(Map *map)
 
 int checkMove(Map *map, int x, int y)
 {
-    if (map->layers[0].schema[x][y] == 25 && map->layers[0].schema[x][y] < 164)
+    if (map->layers[0].schema[x][y] == map->dead_zone_number && map->layers[0].schema[x][y] < 164)
         return 1;
     return 0;
 }
