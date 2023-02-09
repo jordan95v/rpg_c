@@ -38,7 +38,6 @@ void loadLayer(FILE *file, Map *map, int index, char *mode)
 
     if (strstr(mode, "new"))
     {
-        printf("hello\n");
         map->layers[index].schema = (int **)malloc(map->width_map * sizeof(int *));
 
         for (i = 0; i < map->width_map; i++)

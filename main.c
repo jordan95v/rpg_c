@@ -81,6 +81,7 @@ int main(int argc, char **argv)
     // Map and Tileset loading.
     Map *map = loadMap("maps/main.txt");
     Entity *player = createEntity(10, 7, 100, "assets/char.png");
+    char map_name[50] = "main";
 
     // Window creation and everything SDL related.
     SDL_Window *window = NULL;
@@ -156,15 +157,15 @@ int main(int argc, char **argv)
         SDL_Delay(16);
         SDL_UpdateWindowSurface(window);
 
-        if (player->x == 11 && player->y == 22)
+        if (player->x == 11 && player->y == 22 && strstr(map_name, "main"))
         {
-            SDL_Delay(100);
             changeMap(window, &map, "maps/random/map.txt", player, 4, 12);
+            strcpy(map_name, "random");
         }
-        if (player->x == 3 && player->y == 12)
+        if (player->x == 3 && player->y == 12 && strstr(map_name, "random"))
         {
-            SDL_Delay(100);
             changeMap(window, &map, "maps/main/map.txt", player, 10, 22);
+            strcpy(map_name, "main");
         }
     }
 
