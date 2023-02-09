@@ -2,12 +2,25 @@
 #include <stdlib.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <string.h>
 #include "map.h"
 #include "player.h"
 #include "functions.h"
 
 #define RIGHT 0
 #define LEFT 8
+
+void changeMap(SDL_Window *window, Map **map, char *filename, Entity *entity, int x, int y)
+{
+    entity->x = x;
+    entity->y = y;
+    SDL_FillRect(SDL_GetWindowSurface(window), NULL, 0);
+
+    reloadMap(*map, filename);
+
+    if (strstr(filename, "random"))
+        randMap(*map);
+}
 
 int init(SDL_Window **window, int w, int h)
 {
@@ -66,7 +79,7 @@ int showMenu(SDL_Window *window)
 int main(int argc, char **argv)
 {
     // Map and Tileset loading.
-    Map *map = loadMap("maps/main/map.txt");
+    Map *map = loadMap("maps/main.txt");
     Entity *player = createEntity(10, 7, 100, "assets/char.png");
 
     // Window creation and everything SDL related.
@@ -145,12 +158,13 @@ int main(int argc, char **argv)
 
         if (player->x == 11 && player->y == 22)
         {
-            freeMap(map);
-            SDL_FillRect(SDL_GetWindowSurface(window), NULL, 0);
-            player->x = 4;
-            player->y = 12;
-            map = loadMap("maps/random/map.txt");
-            randMap(map);
+            SDL_Delay(100);
+            changeMap(window, &map, "maps/random/map.txt", player, 4, 12);
+        }
+        if (player->x == 3 && player->y == 12)
+        {
+            SDL_Delay(100);
+            changeMap(window, &map, "maps/main/map.txt", player, 10, 22);
         }
     }
 

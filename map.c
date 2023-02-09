@@ -32,14 +32,18 @@ void loadTileset(FILE *file, Map *map)
     }
 }
 
-void loadLayer(FILE *file, Map *map, int index)
+void loadLayer(FILE *file, Map *map, int index, char *mode)
 {
     int i, j, tmp;
-    map->number_of_layer++;
-    map->layers[index].schema = malloc(map->width_map * sizeof(int *));
 
-    for (i = 0; i < map->width_map; i++)
-        map->layers[index].schema[i] = malloc(map->height_map * sizeof(int));
+    if (strstr(mode, "new"))
+    {
+        printf("hello\n");
+        map->layers[index].schema = (int **)malloc(map->width_map * sizeof(int *));
+
+        for (i = 0; i < map->width_map; i++)
+            map->layers[index].schema[i] = (int *)malloc(map->height_map * sizeof(int));
+    }
 
     for (j = 0; j < map->height_map; j++)
     {
@@ -78,7 +82,35 @@ void loadMapLevel(FILE *file, Map *map)
         else
         {
             map->layers = (Layer *)realloc(map->layers, sizeof(Layer) * i + 1);
-            loadLayer(map_file, map, i);
+            map->number_of_layer++;
+            loadLayer(map_file, map, i, "new");
+            i++;
+        }
+        fclose(map_file);
+    }
+}
+
+void reloadMap(Map *map, char *filename)
+{
+    FILE *file = fopen(filename, "r");
+    FILE *map_file = NULL;
+    int i = 0;
+    char buffer[CACHE_SIZE];
+
+    if (!file)
+        raise("Error reading file.");
+
+    while (fgets(buffer, CACHE_SIZE, file) != NULL)
+    {
+        // Remove the \n after the file name, weird cause it work with the tileset :/
+        strcpy(buffer, strtok(buffer, "\n"));
+
+        map_file = fopen(buffer, "r");
+        if (!map_file)
+            break;
+        else
+        {
+            loadLayer(map_file, map, i, "reload");
             i++;
         }
         fclose(map_file);
@@ -132,17 +164,17 @@ void renderMap(SDL_Window *window, Map *map)
 
 int freeMap(Map *map)
 {
-    int i, j;
-    SDL_FreeSurface(map->tileset);
-    for (i = 0; i < map->number_of_layer; i++)
+    for (int i = 0; i < map->number_of_layer; i++)
     {
-        for (j = 0; j < map->height_map; j++)
+        for (int j = 0; j < map->y_tiles; j++)
         {
             free(map->layers[i].schema[j]);
         }
+        free(map->layers[i].schema);
     }
     free(map->layers);
     free(map->tiles);
+    SDL_FreeSurface(map->tileset);
     free(map);
     return 0;
 }
