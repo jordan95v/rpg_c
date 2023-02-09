@@ -24,3 +24,4 @@ Map *loadMap(const char *level);
 void renderMap(SDL_Window *window, Map *map);
 int freeMap(Map *map);
 int checkMove(Map *map, int x, int y);
+void randMap(Map *map);

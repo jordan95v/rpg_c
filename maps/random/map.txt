@@ -1,0 +1,11 @@
+#tileset
+assets/tile_set.png
+16 37
+#level
+38 26
+25
+maps/random/dead_zone.txt
+maps/random/floor.txt
+maps/random/main.txt
+maps/random/objects.txt
+#end

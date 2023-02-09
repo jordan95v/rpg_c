@@ -142,6 +142,15 @@ int main(int argc, char **argv)
         renderCharacter(window, player, map->tile_width, 1, i, "normal");
         SDL_Delay(16);
         SDL_UpdateWindowSurface(window);
+
+        if (player->x == 11 && player->y == 22)
+        {
+            SDL_FillRect(SDL_GetWindowSurface(window), NULL, 0);
+            player->x = 4;
+            player->y = 12;
+            map = loadMap("maps/random/map.txt");
+            randMap(map);
+        }
     }
 
 Quit:

@@ -2,8 +2,8 @@
 #include <SDL2/SDL_image.h>
 typedef struct
 {
-    float x;
-    float y;
+    int x;
+    int y;
     int health;
     SDL_Surface *tileset;
     int facing;
