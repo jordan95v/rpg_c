@@ -155,17 +155,26 @@ int checkMove(Map *map, int x, int y)
     return 0;
 }
 
+void setObject(Map *map, int i, int j, int first, int second)
+{
+    map->layers[3].schema[i][j] = first;
+    map->layers[0].schema[i][j] = -1;
+
+    map->layers[3].schema[i][j + 1] = second;
+    map->layers[0].schema[i][j + 1] = -1;
+}
+
 void randRock(Map *map)
 {
     srand(time(0));
-    for (int i = 0; i < map->width_map; i++)
+    for (int i = 6; i < map->width_map; i++)
     {
         for (int j = 0; j < map->height_map; j++)
         {
-            if (map->layers[0].schema[i][j] == map->dead_zone_number && map->layers[3].schema[i][j] == -1)
+            if (map->layers[0].schema[i][j] == map->dead_zone_number && map->layers[2].schema[i][j + 1] == -1)
             {
                 int buff;
-                buff = rand() % 90;
+                buff = rand() % 111;
                 map->layers[0].schema[i][j] = -1;
 
                 // What a big if - else if, no idea of how i could refactor this.
@@ -187,6 +196,12 @@ void randRock(Map *map)
                     map->layers[3].schema[i][j] = 337;
                 else if (buff == 80)
                     map->layers[3].schema[i][j] = 339;
+                else if (buff == 90)
+                    setObject(map, i, j, 466, 482);
+                else if (buff == 100)
+                    setObject(map, i, j, 530, 546);
+                else if (buff == 110)
+                    setObject(map, i, j, 434, 450);
                 else
                     map->layers[0].schema[i][j] = map->dead_zone_number;
             }
@@ -205,7 +220,7 @@ void randFloor(Map *map)
                 continue;
 
             int buff;
-            buff = rand() % 150;
+            buff = rand() % 151;
 
             // What a big if - else if, no idea of how i could refactor this.
             if (buff == 1)
@@ -258,11 +273,11 @@ void setTomb(Map *map, int i, int j, int first, int second, int third)
 void randTomb(Map *map)
 {
     srand(time(0));
-    for (int i = 0; i < map->width_map; i++)
+    for (int i = 6; i < map->width_map; i++)
     {
         for (int j = 0; j < map->height_map; j++)
         {
-            if (map->layers[0].schema[i][j] == map->dead_zone_number && map->layers[3].schema[i][j] == -1 && map->layers[2].schema[i][j + 1] == -1)
+            if (map->layers[0].schema[i][j] == map->dead_zone_number && map->layers[2].schema[i][j + 1] == -1)
             {
                 int buff;
                 buff = rand() % 150;

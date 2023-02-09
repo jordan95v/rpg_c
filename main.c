@@ -145,6 +145,7 @@ int main(int argc, char **argv)
 
         if (player->x == 11 && player->y == 22)
         {
+            freeMap(map);
             SDL_FillRect(SDL_GetWindowSurface(window), NULL, 0);
             player->x = 4;
             player->y = 12;
