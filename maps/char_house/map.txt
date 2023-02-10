@@ -1,0 +1,9 @@
+#tileset
+assets/char_house.png
+38 26
+#level
+8
+maps/char_house/dead_zone.txt
+maps/char_house/floor.txt
+maps/char_house/main.txt
+maps/char_house/objects.txt

@@ -101,18 +101,34 @@ void reloadMap(Map *map, char *filename)
 
     while (fgets(buffer, CACHE_SIZE, file) != NULL)
     {
-        // Remove the \n after the file name, weird cause it work with the tileset :/
-        strcpy(buffer, strtok(buffer, "\n"));
-
-        map_file = fopen(buffer, "r");
-        if (!map_file)
-            break;
-        else
+        if (strstr(buffer, "#tileset"))
         {
-            loadLayer(map_file, map, i, "reload");
-            i++;
+            SDL_FreeSurface(map->tileset);
+            loadTileset(file, map);
         }
-        fclose(map_file);
+        else if (strstr(buffer, "#level"))
+        {
+            // Gets the dead zone tile number.
+            fgets(buffer, CACHE_SIZE, file);
+            sscanf(buffer, "%d", &map->dead_zone_number);
+
+            while (fgets(buffer, CACHE_SIZE, file) != NULL)
+            {
+                // Remove the \n after the file name, weird cause it work with the tileset :/
+                strcpy(buffer, strtok(buffer, "\n"));
+
+                map_file = fopen(buffer, "r");
+                if (!map_file)
+                    break;
+                else
+                {
+                    loadLayer(map_file, map, i, "reload");
+                    i++;
+                }
+                fclose(map_file);
+            }
+            break;
+        }
     }
 }
 

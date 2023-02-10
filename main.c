@@ -157,6 +157,8 @@ int main(int argc, char **argv)
         SDL_Delay(16);
         SDL_UpdateWindowSurface(window);
 
+        // printf("x: %d y: %d\n", player->x, player->y);
+
         if (player->x == 11 && player->y == 22 && strstr(map_name, "main"))
         {
             changeMap(window, &map, "maps/random/map.txt", player, 4, 12);
@@ -165,6 +167,26 @@ int main(int argc, char **argv)
         if (player->x == 3 && player->y == 12 && strstr(map_name, "random"))
         {
             changeMap(window, &map, "maps/main/map.txt", player, 10, 22);
+            strcpy(map_name, "main");
+        }
+        if ((player->x == 8 || player->x == 7) && player->y == 13 && strstr(map_name, "main"))
+        {
+            changeMap(window, &map, "maps/house/map.txt", player, 19, 20);
+            strcpy(map_name, "house");
+        }
+        if ((player->x == 18 || player->x == 19 || player->x == 20) && player->y == 21 && strstr(map_name, "house"))
+        {
+            changeMap(window, &map, "maps/main/map.txt", player, 8, 14);
+            strcpy(map_name, "main");
+        }
+        if ((player->x == 23 || player->x == 24) && player->y == 22 && strstr(map_name, "main"))
+        {
+            changeMap(window, &map, "maps/char_house/map.txt", player, 20, 5);
+            strcpy(map_name, "char_house");
+        }
+        if ((player->x == 19 || player->x == 20) && player->y == 4 && strstr(map_name, "char_house"))
+        {
+            changeMap(window, &map, "maps/main/map.txt", player, 24, 23);
             strcpy(map_name, "main");
         }
     }
