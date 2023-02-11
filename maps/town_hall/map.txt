@@ -1,0 +1,8 @@
+#tileset
+assets/inside.png
+16 16
+#level
+71
+maps/town_hall/dead_zone.txt
+maps/town_hall/floor.txt
+maps/town_hall/objects.txt

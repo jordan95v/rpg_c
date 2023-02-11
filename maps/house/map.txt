@@ -1,8 +1,0 @@
-#tileset
-assets/inside.png
-16 16
-#level
-71
-maps/house/dead_zone.txt
-maps/house/floor.txt
-maps/house/objects.txt

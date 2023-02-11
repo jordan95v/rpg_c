@@ -91,11 +91,9 @@ int main(int argc, char **argv)
     // if (showMenu(window) != 0)
     //     goto Quit;
 
-    int i, y = 0;
-
     // Main loop.
     SDL_Event event;
-    for (i = 0;; i++)
+    for (int i = 0;;)
     {
         // Event management
         SDL_WaitEvent(&event);
@@ -135,56 +133,70 @@ int main(int argc, char **argv)
             case SDLK_SPACE:
                 for (int j = 0; j < 8; j++)
                 {
-                    renderCharacter(window, player, map->tile_width, y, j, "attack");
-                    SDL_Delay(16);
+                    renderCharacter(window, player, map->tile_width, j, "attack");
                     SDL_UpdateWindowSurface(window);
+                    SDL_Delay(16);
                 }
                 continue;
                 break;
             }
+            break;
+
+        case SDL_MOUSEMOTION:
+            break;
 
         default:
+            // This is used to determine which image to use.
+            i++;
+            if (i > 7)
+                i = 0;
             break;
         }
 
-        // This is used to determine which image to use.
-        if (i > 7)
-            i = 0;
-
         // Render the map and the character.
         renderMap(window, map);
-        renderCharacter(window, player, map->tile_width, 1, i, "normal");
-        SDL_Delay(16);
+        renderCharacter(window, player, map->tile_width, i, "normal");
         SDL_UpdateWindowSurface(window);
+        SDL_Delay(16);
 
         // printf("x: %d y: %d\n", player->x, player->y);
 
-        if (player->x == 11 && player->y == 22 && strstr(map_name, "main"))
+        // Manage the main map event.
+        if (strstr(map_name, "main"))
         {
-            changeMap(window, &map, "maps/random/map.txt", player, 4, 12);
-            strcpy(map_name, "random");
+            if (player->x == 11 && player->y == 22)
+            {
+                changeMap(window, &map, "maps/random/map.txt", player, 4, 12);
+                strcpy(map_name, "random");
+            }
+            else if ((player->x == 8 || player->x == 7) && player->y == 13)
+            {
+                changeMap(window, &map, "maps/town_hall/map.txt", player, 19, 20);
+                strcpy(map_name, "town_hall");
+            }
+            else if ((player->x == 23 || player->x == 24) && player->y == 22)
+            {
+                changeMap(window, &map, "maps/char_house/map.txt", player, 20, 5);
+                strcpy(map_name, "house");
+            }
         }
+
+        // Manage the random map event.
         if (player->x == 3 && player->y == 12 && strstr(map_name, "random"))
         {
             changeMap(window, &map, "maps/main/map.txt", player, 10, 22);
             strcpy(map_name, "main");
         }
-        if ((player->x == 8 || player->x == 7) && player->y == 13 && strstr(map_name, "main"))
-        {
-            changeMap(window, &map, "maps/house/map.txt", player, 19, 20);
-            strcpy(map_name, "house");
-        }
-        if ((player->x == 18 || player->x == 19 || player->x == 20) && player->y == 21 && strstr(map_name, "house"))
+
+        // Manage the house map event.
+        if ((player->x == 18 || player->x == 19 || player->x == 20) && player->y == 21 && strstr(map_name, "town_hall"))
         {
             changeMap(window, &map, "maps/main/map.txt", player, 8, 14);
             strcpy(map_name, "main");
         }
-        if ((player->x == 23 || player->x == 24) && player->y == 22 && strstr(map_name, "main"))
-        {
-            changeMap(window, &map, "maps/char_house/map.txt", player, 20, 5);
-            strcpy(map_name, "char_house");
-        }
-        if ((player->x == 19 || player->x == 20) && player->y == 4 && strstr(map_name, "char_house"))
+
+        // Manage the char house map event.
+        if ((player->x == 19 || player->x == 20) && player->y == 4 && strstr(map_name, "house"))
         {
             changeMap(window, &map, "maps/main/map.txt", player, 24, 23);
             strcpy(map_name, "main");

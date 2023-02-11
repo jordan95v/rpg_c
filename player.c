@@ -18,7 +18,7 @@ Entity *createEntity(int x, int y, int health, char *filename)
     return entity;
 }
 
-void renderCharacter(SDL_Window *window, Entity *character, int size, int y, int shift, char *mode)
+void renderCharacter(SDL_Window *window, Entity *character, int size, int shift, char *mode)
 {
     SDL_Rect src, dest;
     src.w = size;
