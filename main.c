@@ -76,12 +76,35 @@ int showMenu(SDL_Window *window)
     }
 }
 
+void moveEnemy(Map *map, Entity *enemy, Entity *player)
+{
+    if (enemy->x < player->x && checkMove(map, enemy->x + 1, enemy->y))
+    {
+        enemy->x++;
+        enemy->facing = RIGHT;
+    }
+    else if (enemy->x > player->x && checkMove(map, enemy->x - 1, enemy->y))
+    {
+        enemy->x--;
+        enemy->facing = LEFT;
+    }
+    else
+    {
+        if (enemy->y < player->y && checkMove(map, enemy->x, enemy->y + 1))
+            enemy->y++;
+        else if (enemy->y > player->y && checkMove(map, enemy->x, enemy->y - 1))
+            enemy->y--;
+    }
+}
+
 int main(int argc, char **argv)
 {
     // Map and Tileset loading.
     Map *map = loadMap("maps/main.txt");
     Entity *player = createEntity(10, 7, 100, "assets/char.png");
-    char map_name[50] = "main";
+
+    Entity *enemy = createEntity(20, 7, 100, "assets/enemy.png");
+    enemy->facing = RIGHT;
 
     // Window creation and everything SDL related.
     SDL_Window *window = NULL;
@@ -92,6 +115,7 @@ int main(int argc, char **argv)
     //     goto Quit;
 
     // Main loop.
+    char map_name[50] = "main";
     SDL_Event event;
     for (int i = 0;;)
     {
@@ -140,6 +164,7 @@ int main(int argc, char **argv)
                 continue;
                 break;
             }
+            moveEnemy(map, enemy, player);
             break;
 
         case SDL_MOUSEMOTION:
@@ -157,6 +182,7 @@ int main(int argc, char **argv)
         // Render the map and the character.
         renderMap(window, map);
         renderCharacter(window, player, map->tile_width, i, "normal");
+        renderCharacter(window, enemy, map->tile_width, i, "normal");
         SDL_UpdateWindowSurface(window);
         SDL_Delay(16);
 

@@ -23,7 +23,7 @@ void renderCharacter(SDL_Window *window, Entity *character, int size, int shift,
     SDL_Rect src, dest;
     src.w = size;
     src.h = size;
-    src.y = size * 1;
+    src.y = 0;
     src.x = size * (character->facing + shift);
 
     if (strcmp(mode, "attack") == 0)
