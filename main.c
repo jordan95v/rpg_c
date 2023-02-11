@@ -143,6 +143,7 @@ int main(int argc, char **argv)
             break;
 
         case SDL_MOUSEMOTION:
+            continue;
             break;
 
         default:

@@ -130,6 +130,7 @@ void reloadMap(Map *map, char *filename)
             break;
         }
     }
+    fclose(file);
 }
 
 Map *loadMap(const char *level)
