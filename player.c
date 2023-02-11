@@ -92,29 +92,29 @@ int checkAttack(Entity *attacker, Entity *victim)
 
 void moveEnemy(Map *map, Entity *enemy, Entity *player)
 {
-    if (enemy->y < player->y && checkMove(map, enemy->x, enemy->y + 1))
+    if (enemy->x < player->x && checkMove(map, enemy->x + 1, enemy->y))
     {
-        enemy->y++;
-        (enemy->y == player->y && enemy->x == player->x) ? enemy->y-- : 0;
+        enemy->x++;
+        (enemy->x == player->x) ? enemy->x-- : 0;
+        enemy->facing = RIGHT;
     }
-    else if (enemy->y > player->y && checkMove(map, enemy->x, enemy->y - 1))
+    else if (enemy->x > player->x && checkMove(map, enemy->x - 1, enemy->y))
     {
-        enemy->y--;
-        (enemy->y == player->y && enemy->x == player->x) ? enemy->y++ : 0;
+        enemy->x--;
+        (enemy->x == player->x) ? enemy->x++ : 0;
+        enemy->facing = LEFT;
     }
-    else
+    else if (enemy->x == player->x - 1 || enemy->x == player->x + 1 || enemy->x == player->x)
     {
-        if (enemy->x < player->x && checkMove(map, enemy->x + 1, enemy->y))
+        if (enemy->y < player->y && checkMove(map, enemy->x, enemy->y + 1))
         {
-            enemy->x++;
-            (enemy->x == player->x) ? enemy->x-- : 0;
-            enemy->facing = RIGHT;
+            enemy->y++;
+            (enemy->y == player->y && enemy->x == player->x) ? enemy->y-- : 0;
         }
-        else if (enemy->x > player->x && checkMove(map, enemy->x - 1, enemy->y))
+        else if (enemy->y > player->y && checkMove(map, enemy->x, enemy->y - 1))
         {
-            enemy->x--;
-            (enemy->x == player->x) ? enemy->x++ : 0;
-            enemy->facing = LEFT;
+            enemy->y--;
+            (enemy->y == player->y && enemy->x == player->x) ? enemy->y++ : 0;
         }
     }
 }
