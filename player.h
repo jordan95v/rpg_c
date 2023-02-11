@@ -7,6 +7,7 @@ typedef struct
     int health;
     SDL_Surface *tileset;
     int facing;
+    int will_attack;
 } Entity;
 
 void renderCharacter(SDL_Window *window, Entity *character, int size, int shift, char *mode);

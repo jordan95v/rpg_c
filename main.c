@@ -76,24 +76,62 @@ int showMenu(SDL_Window *window)
     }
 }
 
+void attack(Entity *attacker, Entity *victim)
+{
+    switch (attacker->facing)
+    {
+    case RIGHT:
+        if (attacker->x + 1 == victim->x)
+        {
+            victim->health -= 25;
+            victim->x++;
+        }
+    case LEFT:
+        if (attacker->x - 1 == victim->x)
+        {
+            victim->health -= 25;
+            victim->x--;
+        }
+    }
+}
+
+int checkAttack(Entity *attacker, Entity *victim)
+{
+    if (attacker->y == victim->y)
+    {
+        switch (attacker->facing)
+        {
+        case RIGHT:
+            if (attacker->x + 1 == victim->x)
+                return 1;
+        case LEFT:
+            if (attacker->x - 1 == victim->x)
+                return 1;
+        }
+    }
+    return 0;
+}
+
 void moveEnemy(Map *map, Entity *enemy, Entity *player)
 {
-    if (enemy->x < player->x && checkMove(map, enemy->x + 1, enemy->y))
-    {
-        enemy->x++;
-        enemy->facing = RIGHT;
-    }
-    else if (enemy->x > player->x && checkMove(map, enemy->x - 1, enemy->y))
-    {
-        enemy->x--;
-        enemy->facing = LEFT;
-    }
+    if (enemy->y < player->y && checkMove(map, enemy->x, enemy->y + 1))
+        enemy->y++;
+    else if (enemy->y > player->y && checkMove(map, enemy->x, enemy->y - 1))
+        enemy->y--;
     else
     {
-        if (enemy->y < player->y && checkMove(map, enemy->x, enemy->y + 1))
-            enemy->y++;
-        else if (enemy->y > player->y && checkMove(map, enemy->x, enemy->y - 1))
-            enemy->y--;
+        if (enemy->x < player->x && checkMove(map, enemy->x + 1, enemy->y))
+        {
+            enemy->x++;
+            (enemy->x == player->x) ? enemy->x-- : 0;
+            enemy->facing = RIGHT;
+        }
+        else if (enemy->x > player->x && checkMove(map, enemy->x - 1, enemy->y))
+        {
+            enemy->x--;
+            (enemy->x == player->x) ? enemy->x++ : 0;
+            enemy->facing = LEFT;
+        }
     }
 }
 
@@ -161,10 +199,22 @@ int main(int argc, char **argv)
                     SDL_UpdateWindowSurface(window);
                     SDL_Delay(16);
                 }
-                continue;
+                attack(player, enemy);
                 break;
             }
-            moveEnemy(map, enemy, player);
+
+            // Manage enemy attack
+            if (enemy->will_attack)
+            {
+                attack(enemy, player);
+                enemy->will_attack = 0;
+            }
+            else if (checkAttack(enemy, player))
+                enemy->will_attack = 1;
+            else
+                moveEnemy(map, enemy, player);
+
+            printf("health: %d\n", player->health);
             break;
 
         case SDL_MOUSEMOTION:

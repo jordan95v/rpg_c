@@ -14,6 +14,7 @@ Entity *createEntity(int x, int y, int health, char *filename)
     entity->health = health;
     entity->tileset = loadImage(filename);
     entity->facing = 0;
+    entity->will_attack = 0;
 
     return entity;
 }
@@ -28,7 +29,7 @@ void renderCharacter(SDL_Window *window, Entity *character, int size, int shift,
 
     if (strcmp(mode, "attack") == 0)
     {
-        src.y = size * 2;
+        src.y = size;
     }
 
     dest.x = character->x * size;
