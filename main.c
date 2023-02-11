@@ -3,7 +3,6 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <string.h>
-#include "map.h"
 #include "player.h"
 #include "functions.h"
 
@@ -76,65 +75,6 @@ int showMenu(SDL_Window *window)
     }
 }
 
-void attack(Entity *attacker, Entity *victim)
-{
-    switch (attacker->facing)
-    {
-    case RIGHT:
-        if (attacker->x + 1 == victim->x)
-        {
-            victim->health -= 25;
-            victim->x++;
-        }
-    case LEFT:
-        if (attacker->x - 1 == victim->x)
-        {
-            victim->health -= 25;
-            victim->x--;
-        }
-    }
-}
-
-int checkAttack(Entity *attacker, Entity *victim)
-{
-    if (attacker->y == victim->y)
-    {
-        switch (attacker->facing)
-        {
-        case RIGHT:
-            if (attacker->x + 1 == victim->x)
-                return 1;
-        case LEFT:
-            if (attacker->x - 1 == victim->x)
-                return 1;
-        }
-    }
-    return 0;
-}
-
-void moveEnemy(Map *map, Entity *enemy, Entity *player)
-{
-    if (enemy->y < player->y && checkMove(map, enemy->x, enemy->y + 1))
-        enemy->y++;
-    else if (enemy->y > player->y && checkMove(map, enemy->x, enemy->y - 1))
-        enemy->y--;
-    else
-    {
-        if (enemy->x < player->x && checkMove(map, enemy->x + 1, enemy->y))
-        {
-            enemy->x++;
-            (enemy->x == player->x) ? enemy->x-- : 0;
-            enemy->facing = RIGHT;
-        }
-        else if (enemy->x > player->x && checkMove(map, enemy->x - 1, enemy->y))
-        {
-            enemy->x--;
-            (enemy->x == player->x) ? enemy->x++ : 0;
-            enemy->facing = LEFT;
-        }
-    }
-}
-
 int main(int argc, char **argv)
 {
     // Map and Tileset loading.
@@ -173,22 +113,30 @@ int main(int argc, char **argv)
             case SDLK_UP:
                 if (player->y > 0 && checkMove(map, player->x, player->y - 1))
                     player->y--;
+                if (!checkCollision(player, enemy))
+                    player->y++;
                 break;
 
             case SDLK_DOWN:
                 if (player->y < map->height_map - 1 && checkMove(map, player->x, player->y + 1))
                     player->y++;
+                if (!checkCollision(player, enemy))
+                    player->y--;
                 break;
 
             case SDLK_RIGHT:
                 if (player->x < map->width_map - 1 && checkMove(map, player->x + 1, player->y))
                     player->x++;
+                if (!checkCollision(player, enemy))
+                    player->x--;
                 player->facing = RIGHT;
                 break;
 
             case SDLK_LEFT:
                 if (player->x > 0 && checkMove(map, player->x - 1, player->y))
                     player->x--;
+                if (!checkCollision(player, enemy))
+                    player->x++;
                 player->facing = LEFT;
                 break;
 
