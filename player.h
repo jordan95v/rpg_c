@@ -14,8 +14,9 @@ typedef struct
 
 void renderCharacter(SDL_Window *window, Entity *character, int size, int shift, char *mode);
 Entity *createEntity(int x, int y, int health, char *filename);
-void moveEnemy(Map *map, Entity *enemy, Entity *player);
+Entity *createEnemy(int x, int y, int health, SDL_Surface *surface);
+void moveEnemy(Map *map, Entity **enemies, int enemies_number, Entity *player);
 int checkAttack(Entity *attacker, Entity *victim);
 void attack(Entity *attacker, Entity *victim);
-int checkCollision(Entity *player, Entity *enemy);
+int checkCollision(Entity *player, Entity **enemies, int enemies_number);
 void freePlayer(Entity *character);

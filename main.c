@@ -3,6 +3,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <string.h>
+#include <time.h>
 #include "player.h"
 #include "functions.h"
 
@@ -27,8 +28,10 @@ int main(int argc, char **argv)
     Map *map = loadMap("maps/main.txt");
     Entity *player = createEntity(10, 7, 100, "assets/char.png");
 
-    Entity *enemy = createEntity(20, 7, 100, "assets/enemy.png");
-    enemy->facing = RIGHT;
+    Entity **enemies = NULL;
+    SDL_Surface *enemy_surface = loadImage("assets/enemy.png");
+    int enemies_number = 0;
+    int j = 0;
 
     // Window creation and everything SDL related.
     SDL_Window *window = NULL;
@@ -59,21 +62,21 @@ int main(int argc, char **argv)
             case SDLK_UP:
                 if (player->y > 0 && checkMove(map, player->x, player->y - 1))
                     player->y--;
-                if (!checkCollision(player, enemy))
+                if (!checkCollision(player, enemies, enemies_number))
                     player->y++;
                 break;
 
             case SDLK_DOWN:
                 if (player->y < map->height_map - 1 && checkMove(map, player->x, player->y + 1))
                     player->y++;
-                if (!checkCollision(player, enemy))
+                if (!checkCollision(player, enemies, enemies_number))
                     player->y--;
                 break;
 
             case SDLK_RIGHT:
                 if (player->x < map->width_map - 1 && checkMove(map, player->x + 1, player->y))
                     player->x++;
-                if (!checkCollision(player, enemy))
+                if (!checkCollision(player, enemies, enemies_number))
                     player->x--;
                 player->facing = RIGHT;
                 break;
@@ -81,34 +84,38 @@ int main(int argc, char **argv)
             case SDLK_LEFT:
                 if (player->x > 0 && checkMove(map, player->x - 1, player->y))
                     player->x--;
-                if (!checkCollision(player, enemy))
+                if (!checkCollision(player, enemies, enemies_number))
                     player->x++;
                 player->facing = LEFT;
                 break;
 
             case SDLK_SPACE:
-                for (int j = 0; j < 8; j++)
+                for (j = 0; j < 8; j++)
                 {
                     renderCharacter(window, player, map->tile_width, j, "attack");
                     SDL_UpdateWindowSurface(window);
                     SDL_Delay(16);
                 }
-                attack(player, enemy);
+                for (j = 0; j < enemies_number; j++)
+                {
+                    printf("%d\n", enemies[j]->x);
+                    attack(player, enemies[j]);
+                }
                 break;
             }
 
-            // Manage enemy attack
-            if (enemy->will_attack)
+            moveEnemy(map, enemies, enemies_number, player);
+            for (j = 0; j < enemies_number; j++)
             {
-                attack(enemy, player);
-                enemy->will_attack = 0;
+                // Manage enemy attack
+                if (enemies[j]->will_attack)
+                {
+                    attack(enemies[j], player);
+                    enemies[j]->will_attack = 0;
+                }
+                else if (checkAttack(enemies[j], player))
+                    enemies[j]->will_attack = 1;
             }
-            else if (checkAttack(enemy, player))
-                enemy->will_attack = 1;
-            else
-                moveEnemy(map, enemy, player);
-
-            printf("health: %d\n", player->health);
             break;
 
         case SDL_MOUSEMOTION:
@@ -126,19 +133,44 @@ int main(int argc, char **argv)
         // Render the map and the character.
         renderMap(window, map);
         renderCharacter(window, player, map->tile_width, i, "normal");
-        renderCharacter(window, enemy, map->tile_width, i, "normal");
+        if (enemies != NULL)
+        {
+            for (j = 0; j < enemies_number; j++)
+            {
+                renderCharacter(window, enemies[j], map->tile_width, i, "normal");
+            }
+        }
         SDL_UpdateWindowSurface(window);
         SDL_Delay(16);
-
-        // printf("x: %d y: %d\n", player->x, player->y);
 
         // Manage the main map event.
         if (strstr(map_name, "main"))
         {
             if (player->x == 11 && player->y == 22)
             {
+                srand(time(0));
+                int max_enemies = rand() % 3;
+
                 changeMap(window, &map, "maps/random/map.txt", player, 4, 12);
                 strcpy(map_name, "random");
+                for (int k = 10; k < map->width_map; k++)
+                {
+                    for (j = 0; j < map->height_map; j++)
+                    {
+                        if (map->layers[0].schema[k][j] == map->dead_zone_number && enemies_number < max_enemies + 1)
+                        {
+                            enemies = (Entity **)realloc(enemies, sizeof(Entity *) * enemies_number + 1);
+                            if (enemies == NULL)
+                            {
+                                raise("Error while generating enemies.");
+                                goto Quit;
+                            }
+                            enemies[enemies_number] = createEnemy(k, j, 100, enemy_surface);
+                            enemies[enemies_number]->facing = LEFT;
+                            enemies_number++;
+                        }
+                    }
+                }
             }
             else if ((player->x == 8 || player->x == 7) && player->y == 13)
             {

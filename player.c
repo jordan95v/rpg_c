@@ -22,10 +22,31 @@ Entity *createEntity(int x, int y, int health, char *filename)
     return entity;
 }
 
-int checkCollision(Entity *player, Entity *enemy)
+Entity *createEnemy(int x, int y, int health, SDL_Surface *surface)
 {
-    if (player->x == enemy->x && player->y == enemy->y)
-        return 0;
+    Entity *entity = NULL;
+    entity = malloc(sizeof(Entity));
+
+    entity->x = x;
+    entity->y = y;
+    entity->health = health;
+    entity->tileset = surface;
+    entity->facing = 0;
+    entity->will_attack = 0;
+
+    return entity;
+}
+
+int checkCollision(Entity *player, Entity **enemies, int enemies_number)
+{
+    if (enemies == NULL)
+        return 1;
+
+    for (int i = 0; i < enemies_number; i++)
+    {
+        if (player->x == enemies[i]->x && player->y == enemies[i]->y)
+            return 0;
+    }
     return 1;
 }
 
@@ -90,31 +111,65 @@ int checkAttack(Entity *attacker, Entity *victim)
     return 0;
 }
 
-void moveEnemy(Map *map, Entity *enemy, Entity *player)
+void moveEnemy(Map *map, Entity **enemies, int enemies_number, Entity *player)
 {
-    if (enemy->x < player->x && checkMove(map, enemy->x + 1, enemy->y))
+    int i, j, k;
+    char orientation;
+
+    for (i = 0; i < enemies_number; i++)
     {
-        enemy->x++;
-        (enemy->x == player->x) ? enemy->x-- : 0;
-        enemy->facing = RIGHT;
-    }
-    else if (enemy->x > player->x && checkMove(map, enemy->x - 1, enemy->y))
-    {
-        enemy->x--;
-        (enemy->x == player->x) ? enemy->x++ : 0;
-        enemy->facing = LEFT;
-    }
-    else if (enemy->x == player->x - 1 || enemy->x == player->x + 1 || enemy->x == player->x)
-    {
-        if (enemy->y < player->y && checkMove(map, enemy->x, enemy->y + 1))
+        for (j = 0; j < enemies_number; j++)
         {
-            enemy->y++;
-            (enemy->y == player->y && enemy->x == player->x) ? enemy->y-- : 0;
-        }
-        else if (enemy->y > player->y && checkMove(map, enemy->x, enemy->y - 1))
-        {
-            enemy->y--;
-            (enemy->y == player->y && enemy->x == player->x) ? enemy->y++ : 0;
+            if (i == j || enemies[i]->will_attack)
+                continue;
+
+            if (enemies[i]->x < player->x && checkMove(map, enemies[i]->x + 1, enemies[i]->y))
+            {
+                enemies[i]->x++;
+                (enemies[i]->x == player->x) ? enemies[i]->x-- : 0;
+                orientation = 'r';
+                enemies[i]->facing = RIGHT;
+            }
+            else if (enemies[i]->x > player->x && checkMove(map, enemies[i]->x - 1, enemies[i]->y))
+            {
+                enemies[i]->x--;
+                (enemies[i]->x == player->x) ? enemies[i]->x++ : 0;
+                orientation = 'l';
+                enemies[i]->facing = LEFT;
+            }
+            else
+            {
+                if (enemies[i]->y < player->y && checkMove(map, enemies[i]->x, enemies[i]->y + 1))
+                {
+                    enemies[i]->y++;
+                    (enemies[i]->y == player->y && enemies[i]->x == player->x) ? enemies[i]->y-- : 0;
+                    orientation = 'd';
+                }
+                else if (enemies[i]->y > player->y && checkMove(map, enemies[i]->x, enemies[i]->y - 1))
+                {
+                    enemies[i]->y--;
+                    (enemies[i]->y == player->y && enemies[i]->x == player->x) ? enemies[i]->y++ : 0;
+                    orientation = 'u';
+                }
+            }
+
+            for (k = 0; k < enemies_number; k++)
+            {
+                if (k == i)
+                    continue;
+
+                if (enemies[i]->x == enemies[k]->x && enemies[i]->y == enemies[k]->y)
+                {
+                    if (orientation == 'r')
+                        enemies[i]->x++;
+                    else if (orientation == 'l')
+                        enemies[i]->x--;
+                    else if (orientation == 'u')
+                        enemies[i]->y++;
+                    else if (orientation == 'd')
+                        enemies[i]->y--;
+                }
+            }
         }
     }
 }
