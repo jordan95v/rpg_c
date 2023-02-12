@@ -22,11 +22,29 @@ void changeMap(SDL_Window *window, Map **map, char *filename, Entity *entity, in
         randMap(*map);
 }
 
+int remove_element(Entity **array, int n)
+{
+    int i, j;
+    for (i = 0; i < n; i++)
+    {
+        if (array[i]->health == 0)
+        {
+            for (j = i; j < n - 1; j++)
+            {
+                array[j] = array[j + 1];
+            }
+            n--;
+            i--;
+        }
+    }
+    return n;
+}
+
 int main(int argc, char **argv)
 {
     // Map and Tileset loading.
     Map *map = loadMap("maps/main.txt");
-    Entity *player = createEntity(10, 7, 100, "assets/char.png");
+    Entity *player = createEntity(10, 7, 5, "assets/char.png");
 
     Entity **enemies = NULL;
     SDL_Surface *enemy_surface = loadImage("assets/enemy.png");
@@ -98,8 +116,9 @@ int main(int argc, char **argv)
                 }
                 for (j = 0; j < enemies_number; j++)
                 {
-                    printf("%d\n", enemies[j]->x);
                     attack(player, enemies[j]);
+                    enemies_number = remove_element(enemies, enemies_number);
+                    printf("%d\n", enemies_number);
                 }
                 break;
             }
@@ -137,7 +156,8 @@ int main(int argc, char **argv)
         {
             for (j = 0; j < enemies_number; j++)
             {
-                renderCharacter(window, enemies[j], map->tile_width, i, "normal");
+                if (enemies[j] != NULL)
+                    renderCharacter(window, enemies[j], map->tile_width, i, "normal");
             }
         }
         SDL_UpdateWindowSurface(window);
@@ -165,7 +185,7 @@ int main(int argc, char **argv)
                                 raise("Error while generating enemies.");
                                 goto Quit;
                             }
-                            enemies[enemies_number] = createEnemy(k, j, 100, enemy_surface);
+                            enemies[enemies_number] = createEnemy(k, j, 3, enemy_surface);
                             enemies[enemies_number]->facing = LEFT;
                             enemies_number++;
                         }
