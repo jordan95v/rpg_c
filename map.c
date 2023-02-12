@@ -206,7 +206,7 @@ int checkMove(Map *map, int x, int y)
 void setObject(Map *map, int i, int j, int first, int second)
 {
     map->layers[3].schema[i][j] = first;
-    map->layers[0].schema[i][j] = -1;
+    map->layers[0].schema[i][j] = map->dead_zone_number;
 
     map->layers[3].schema[i][j + 1] = second;
     map->layers[0].schema[i][j + 1] = -1;
@@ -310,7 +310,7 @@ void randFloor(Map *map)
 void setTomb(Map *map, int i, int j, int first, int second, int third)
 {
     map->layers[3].schema[i][j] = first;
-    map->layers[0].schema[i][j] = -1;
+    map->layers[0].schema[i][j] = map->dead_zone_number;
 
     map->layers[3].schema[i][j + 1] = second;
     map->layers[0].schema[i][j + 1] = -1;

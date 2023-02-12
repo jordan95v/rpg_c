@@ -118,9 +118,12 @@ void moveEnemy(Map *map, Entity **enemies, int enemies_number, Entity *player)
 
     for (i = 0; i < enemies_number; i++)
     {
+        if (enemies[i]->will_attack != 0)
+            continue;
+
         for (j = 0; j < enemies_number; j++)
         {
-            if (i == j || enemies[i]->will_attack)
+            if (i == j)
                 continue;
 
             if (enemies[i]->x < player->x && checkMove(map, enemies[i]->x + 1, enemies[i]->y))
