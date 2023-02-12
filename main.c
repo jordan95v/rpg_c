@@ -205,7 +205,7 @@ int main(int argc, char **argv)
         }
 
         // Manage the random map event.
-        if (player->x == 3 && player->y == 12 && strstr(map_name, "random"))
+        if (player->x == 3 && player->y == 12 && strstr(map_name, "random") && enemies_number == 0)
         {
             changeMap(window, &map, "maps/main/map.txt", player, 10, 22);
             strcpy(map_name, "main");
