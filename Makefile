@@ -13,5 +13,8 @@ functions.o: functions.c functions.h
 %.o: %.c %.h
 	$(CC) -c $<
 
+install:
+	apt install gcc libsdl2-dev libsdl2-image-dev
+
 clean:
 	rm -rf *.o $(EXE)
