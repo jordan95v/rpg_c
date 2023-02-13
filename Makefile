@@ -16,5 +16,8 @@ functions.o: functions.c functions.h
 install:
 	apt install gcc libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev -y
 
+uninstall:
+	apt remove libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev -y
+
 clean:
 	rm -rf *.o $(EXE)

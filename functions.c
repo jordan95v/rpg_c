@@ -32,9 +32,8 @@ int showMenu(SDL_Window *window)
         while (SDL_PollEvent(&event))
         {
             if (event.type == SDL_QUIT)
-            {
                 return -1;
-            }
+
             if (event.type == SDL_MOUSEBUTTONDOWN)
             {
                 int x, y;
@@ -99,4 +98,22 @@ void renderHeartUI(TTF_Font *font, SDL_Surface *heart, SDL_Surface *window, int 
     text_rect.x = heart->w + surface->w * 2;
     SDL_BlitSurface(surface, NULL, window, &text_rect);
     SDL_FreeSurface(surface);
+}
+
+void gameOver(SDL_Surface *window, TTF_Font *font)
+{
+    SDL_FillRect(window, NULL, 0);
+    SDL_Rect text_rect;
+    char *texts[2] = {"Game Over", "Appuyer pour recommencer"};
+
+    for (int i = 1; i < 3; i++)
+    {
+        text_rect.x = window->w / 2 - 135;
+        if (i == 1)
+            text_rect.x += 70;
+        text_rect.y = window->h / 3 + i * 35;
+        SDL_Surface *surface = TTF_RenderText_Solid(font, texts[i - 1], COLOR_BLACK);
+        SDL_BlitSurface(surface, NULL, window, &text_rect);
+        SDL_FreeSurface(surface);
+    }
 }
