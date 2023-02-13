@@ -63,6 +63,7 @@ int main(int argc, char **argv)
     // Font creation and heart image load.
     TTF_Font *font = TTF_OpenFont("assets/Triforce.ttf", 24);
     SDL_Surface *heart = loadImage("assets/heart.png");
+    SDL_Surface *store = loadImage("assets/store.png");
 
     // Show the menu.
     if (showMenu(window) != 0)
@@ -71,6 +72,7 @@ int main(int argc, char **argv)
 Main:
     // Main loop.
     int i, j = 0;
+    int buyed = 0;
     SDL_Event event;
     for (i = 0;;)
     {
@@ -247,6 +249,43 @@ Main:
                 changeMap(window, &map, "maps/char_house/map.txt", player, 20, 5);
                 strcpy(map_name, "house");
             }
+            else if ((player->x == 13 || player->x == 14) && player->y == 7)
+            {
+                SDL_BlitSurface(store, NULL, window_surface, NULL);
+                SDL_UpdateWindowSurface(window);
+
+                if (buyed == 0)
+                {
+
+                    while (1)
+                    {
+                        SDL_WaitEvent(&event);
+
+                        switch (event.type)
+                        {
+                        case SDL_QUIT:
+                            goto Quit;
+                            break;
+
+                        case SDL_KEYDOWN:
+                            switch (event.key.keysym.sym)
+                            {
+                            case SDLK_o:
+                                printf("hello\n");
+                                buyed = 1;
+                                player->y++;
+                                goto Main;
+                            case SDLK_n:
+                                printf("et bah non\n");
+                                buyed = 0;
+                                player->y++;
+                                goto Main;
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
         }
 
         // Manage the random map event.
@@ -281,6 +320,8 @@ Quit:
     freeMap(map);
     freePlayer(player);
     TTF_CloseFont(font);
+    SDL_FreeSurface(store);
+    SDL_FreeSurface(heart);
     for (j = 0; j < enemies_number; j++)
         freePlayer(enemies[j]);
     SDL_Quit();
