@@ -73,6 +73,14 @@ int init(SDL_Window **window, int w, int h)
     return 0;
 }
 
+void renderCoinsUI(SDL_Surface *font, SDL_Surface *window)
+{
+    SDL_Rect text_rect;
+    text_rect.x = window->w - font->w - 10;
+    text_rect.y = 10;
+    SDL_BlitSurface(font, NULL, window, &text_rect);
+}
+
 SDL_Surface *createCoinsFont(char *filename, int coins)
 {
     TTF_Font *font = TTF_OpenFont(filename, 24);

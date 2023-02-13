@@ -44,6 +44,13 @@ int main(int argc, char **argv)
 {
     // Map and Tileset loading.
     Map *map = loadMap("maps/main.txt");
+
+    // Window creation and everything SDL related.
+    SDL_Window *window = NULL;
+    if (init(&window, map->width_map * map->tile_width, map->height_map * map->tile_height) != 0)
+        goto Quit;
+    SDL_Surface *window_surface = SDL_GetWindowSurface(window);
+
     Entity *player = createEntity(10, 7, 5, "assets/char.png");
 
     Entity **enemies = NULL;
@@ -51,22 +58,14 @@ int main(int argc, char **argv)
     int enemies_number = 0;
     int j = 0;
 
-    // Window creation and everything SDL related.
-    SDL_Window *window = NULL;
-    if (init(&window, map->width_map * map->tile_width, map->height_map * map->tile_height) != 0)
-        goto Quit;
+    // Font initialization.
+    SDL_Surface *font = createCoinsFont("assets/Triforce.ttf", player->coins);
 
     // if (showMenu(window) != 0)
     //     goto Quit;
 
     // Main loop.
     char map_name[50] = "main";
-
-    SDL_Surface *font = createCoinsFont("assets/Triforce.ttf", 10);
-    SDL_Rect text_rect;
-    text_rect.x = map->tile_width * map->width_map - font->w - 10;
-    text_rect.y = 10;
-
     SDL_Event event;
     for (int i = 0;;)
     {
@@ -116,7 +115,7 @@ int main(int argc, char **argv)
             case SDLK_SPACE:
                 for (j = 0; j < 8; j++)
                 {
-                    renderCharacter(window, player, map->tile_width, j, "attack");
+                    renderCharacter(window_surface, player, map->tile_width, j, "attack");
                     SDL_UpdateWindowSurface(window);
                     SDL_Delay(16);
                 }
@@ -124,7 +123,6 @@ int main(int argc, char **argv)
                 {
                     attack(player, enemies[j]);
                     enemies_number = remove_element(enemies, enemies_number);
-                    printf("%d\n", enemies_number);
                 }
                 break;
             }
@@ -156,17 +154,17 @@ int main(int argc, char **argv)
         }
 
         // Render the map and the character.
-        renderMap(window, map);
-        renderCharacter(window, player, map->tile_width, i, "normal");
+        renderMap(window_surface, map);
+        renderCharacter(window_surface, player, map->tile_width, i, "normal");
         if (enemies != NULL)
         {
             for (j = 0; j < enemies_number; j++)
             {
                 if (enemies[j] != NULL)
-                    renderCharacter(window, enemies[j], map->tile_width, i, "normal");
+                    renderCharacter(window_surface, enemies[j], map->tile_width, i, "normal");
             }
         }
-        SDL_BlitSurface(font, NULL, SDL_GetWindowSurface(window), &text_rect);
+        renderCoinsUI(font, window_surface);
         SDL_UpdateWindowSurface(window);
         SDL_Delay(16);
 

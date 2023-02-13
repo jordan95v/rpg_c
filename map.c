@@ -158,7 +158,7 @@ Map *loadMap(const char *level)
     return map;
 }
 
-void renderMap(SDL_Window *window, Map *map)
+void renderMap(SDL_Surface *window, Map *map)
 {
     int i, j, layer_number, tile_number;
     SDL_Rect dest;
@@ -172,7 +172,7 @@ void renderMap(SDL_Window *window, Map *map)
                 dest.x = i * map->tile_width;
                 dest.y = j * map->tile_height;
                 tile_number = map->layers[layer_number].schema[i][j];
-                SDL_BlitSurface(map->tileset, &(map->tiles[tile_number]), SDL_GetWindowSurface(window), &dest);
+                SDL_BlitSurface(map->tileset, &(map->tiles[tile_number]), window, &dest);
             }
         }
     }

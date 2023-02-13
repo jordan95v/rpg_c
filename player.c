@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
 #include "player.h"
 #include "functions.h"
 
@@ -18,12 +19,14 @@ Entity *createEntity(int x, int y, int health, char *filename)
     entity->tileset = loadImage(filename);
     entity->facing = 0;
     entity->will_attack = 0;
+    entity->coins = 0;
 
     return entity;
 }
 
 Entity *createEnemy(int x, int y, int health, SDL_Surface *surface)
 {
+    srand(time(0));
     Entity *entity = NULL;
     entity = malloc(sizeof(Entity));
 
@@ -33,6 +36,7 @@ Entity *createEnemy(int x, int y, int health, SDL_Surface *surface)
     entity->tileset = surface;
     entity->facing = 0;
     entity->will_attack = 0;
+    entity->coins = (rand() % 4) + 1;
 
     return entity;
 }
@@ -50,7 +54,7 @@ int checkCollision(Entity *player, Entity **enemies, int enemies_number)
     return 1;
 }
 
-void renderCharacter(SDL_Window *window, Entity *character, int size, int shift, char *mode)
+void renderCharacter(SDL_Surface *window, Entity *character, int size, int shift, char *mode)
 {
     SDL_Rect src, dest;
     src.w = size;
@@ -66,7 +70,7 @@ void renderCharacter(SDL_Window *window, Entity *character, int size, int shift,
     dest.x = character->x * size;
     dest.y = character->y * size;
 
-    SDL_BlitSurface(character->tileset, &src, SDL_GetWindowSurface(window), &dest);
+    SDL_BlitSurface(character->tileset, &src, window, &dest);
 }
 
 void freePlayer(Entity *entity)
