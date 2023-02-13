@@ -132,58 +132,64 @@ void moveEnemy(Map *map, Entity **enemies, int enemies_number, Entity *player)
         if (enemies[i]->will_attack != 0)
             continue;
 
-        for (j = 0; j < enemies_number; j++)
+        if (enemies[i]->y < player->y && checkMove(map, enemies[i]->x, enemies[i]->y + 1))
         {
-            if (i == j && enemies_number > 1)
+            enemies[i]->y++;
+            (enemies[i]->y == player->y && enemies[i]->x == player->x) ? enemies[i]->y-- : 0;
+            orientation = 'd';
+        }
+        else if (enemies[i]->y > player->y && checkMove(map, enemies[i]->x, enemies[i]->y - 1))
+        {
+            enemies[i]->y--;
+            (enemies[i]->y == player->y && enemies[i]->x == player->x) ? enemies[i]->y++ : 0;
+            orientation = 'u';
+        }
+        else
+        {
+            if (enemies[i]->x < player->x && checkMove(map, enemies[i]->x + 1, enemies[i]->y))
+            {
+                enemies[i]->x++;
+                (enemies[i]->x == player->x) ? enemies[i]->x-- : 0;
+                orientation = 'r';
+                enemies[i]->facing = RIGHT;
+            }
+            else if (enemies[i]->x > player->x && checkMove(map, enemies[i]->x - 1, enemies[i]->y))
+            {
+                enemies[i]->x--;
+                (enemies[i]->x == player->x) ? enemies[i]->x++ : 0;
+                orientation = 'l';
+                enemies[i]->facing = LEFT;
+            }
+        }
+
+        for (k = 0; k < enemies_number; k++)
+        {
+            if (k == i)
                 continue;
 
-            if (enemies[i]->y < player->y && checkMove(map, enemies[i]->x, enemies[i]->y + 1))
+            if (enemies[i]->x == enemies[k]->x && enemies[i]->y == enemies[k]->y)
             {
-                enemies[i]->y++;
-                (enemies[i]->y == player->y && enemies[i]->x == player->x) ? enemies[i]->y-- : 0;
-                orientation = 'd';
-            }
-            else if (enemies[i]->y > player->y && checkMove(map, enemies[i]->x, enemies[i]->y - 1))
-            {
-                enemies[i]->y--;
-                (enemies[i]->y == player->y && enemies[i]->x == player->x) ? enemies[i]->y++ : 0;
-                orientation = 'u';
-            }
-            else
-            {
-                if (enemies[i]->x < player->x && checkMove(map, enemies[i]->x + 1, enemies[i]->y))
-                {
+                if (orientation == 'r')
                     enemies[i]->x++;
-                    (enemies[i]->x == player->x) ? enemies[i]->x-- : 0;
-                    orientation = 'r';
-                    enemies[i]->facing = RIGHT;
-                }
-                else if (enemies[i]->x > player->x && checkMove(map, enemies[i]->x - 1, enemies[i]->y))
-                {
+                else if (orientation == 'l')
                     enemies[i]->x--;
-                    (enemies[i]->x == player->x) ? enemies[i]->x++ : 0;
-                    orientation = 'l';
-                    enemies[i]->facing = LEFT;
-                }
+                else if (orientation == 'u')
+                    enemies[i]->y++;
+                else if (orientation == 'd')
+                    enemies[i]->y--;
             }
+        }
 
-            for (k = 0; k < enemies_number; k++)
-            {
-                if (k == i)
-                    continue;
-
-                if (enemies[i]->x == enemies[k]->x && enemies[i]->y == enemies[k]->y)
-                {
-                    if (orientation == 'r')
-                        enemies[i]->x++;
-                    else if (orientation == 'l')
-                        enemies[i]->x--;
-                    else if (orientation == 'u')
-                        enemies[i]->y++;
-                    else if (orientation == 'd')
-                        enemies[i]->y--;
-                }
-            }
+        if (enemies[i]->x == player->x && enemies[i]->y == player->y)
+        {
+            if (orientation == 'r')
+                enemies[i]->x++;
+            else if (orientation == 'l')
+                enemies[i]->x--;
+            else if (orientation == 'u')
+                enemies[i]->y++;
+            else if (orientation == 'd')
+                enemies[i]->y--;
         }
     }
 }

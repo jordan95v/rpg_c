@@ -189,17 +189,20 @@ int main(int argc, char **argv)
                 {
                     for (j = 0; j < map->height_map; j++)
                     {
-                        if (map->layers[0].schema[k][j] == map->dead_zone_number && enemies_number < max_enemies + 1)
+                        if (rand() % 50 == 1)
                         {
-                            enemies = (Entity **)realloc(enemies, sizeof(Entity *) * enemies_number + 1);
-                            if (enemies == NULL)
+                            if (map->layers[0].schema[k][j] == map->dead_zone_number && enemies_number < max_enemies + 1)
                             {
-                                raise("Error while generating enemies.");
-                                goto Quit;
+                                enemies = (Entity **)realloc(enemies, sizeof(Entity *) * enemies_number + 1);
+                                if (enemies == NULL)
+                                {
+                                    raise("Error while generating enemies.");
+                                    goto Quit;
+                                }
+                                enemies[enemies_number] = createEnemy(k, j, 3, enemy_surface, rand() % 4 + 1);
+                                enemies[enemies_number]->facing = LEFT;
+                                enemies_number++;
                             }
-                            enemies[enemies_number] = createEnemy(k, j, 3, enemy_surface, rand() % 4 + 1);
-                            enemies[enemies_number]->facing = LEFT;
-                            enemies_number++;
                         }
                     }
                 }
