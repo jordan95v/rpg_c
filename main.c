@@ -61,6 +61,12 @@ int main(int argc, char **argv)
 
     // Main loop.
     char map_name[50] = "main";
+
+    SDL_Surface *font = createCoinsFont("assets/Triforce.ttf", 10);
+    SDL_Rect text_rect;
+    text_rect.x = map->tile_width * map->width_map - font->w - 10;
+    text_rect.y = 10;
+
     SDL_Event event;
     for (int i = 0;;)
     {
@@ -160,6 +166,7 @@ int main(int argc, char **argv)
                     renderCharacter(window, enemies[j], map->tile_width, i, "normal");
             }
         }
+        SDL_BlitSurface(font, NULL, SDL_GetWindowSurface(window), &text_rect);
         SDL_UpdateWindowSurface(window);
         SDL_Delay(16);
 

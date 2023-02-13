@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
 
 void raise(char *error)
 {
@@ -61,12 +62,26 @@ int init(SDL_Window **window, int w, int h)
 
     // Init the SDL_Image PNG.
     if (IMG_Init(IMG_INIT_PNG) != IMG_INIT_PNG)
-    {
-        printf("Error with IMG_Init\n");
-        return -1;
-    }
+        raise("Error initializing sdl-image.");
+
+    // Init the TTF
+    if (TTF_Init() < 0)
+        raise("Error initializing sdl-ttf");
 
     // Create the window.
     *window = SDL_CreateWindow("Zelda Game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, w, h, SDL_WINDOW_SHOWN);
     return 0;
+}
+
+SDL_Surface *createCoinsFont(char *filename, int coins)
+{
+    TTF_Font *font = TTF_OpenFont(filename, 24);
+    SDL_Color color = {255, 255, 255};
+    char text[20];
+
+    if (!font)
+        raise("Error initializing font.");
+
+    sprintf(text, "%d coins", coins);
+    return TTF_RenderText_Solid(font, text, color);
 }
