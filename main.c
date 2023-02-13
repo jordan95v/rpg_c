@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
 #include <string.h>
 #include <time.h>
 #include "player.h"
@@ -45,6 +46,7 @@ int main(int argc, char **argv)
 {
     // Map and Tileset loading.
     Map *map = loadMap("maps/main.txt");
+    char map_name[50] = "main";
 
     // Window creation and everything SDL related.
     SDL_Window *window = NULL;
@@ -52,22 +54,23 @@ int main(int argc, char **argv)
         goto Quit;
     SDL_Surface *window_surface = SDL_GetWindowSurface(window);
 
+    // Entity creations.
     Entity *player = createEntity(10, 7, 5, "assets/char.png");
-
     Entity **enemies = NULL;
     SDL_Surface *enemy_surface = loadImage("assets/enemy.png");
-    SDL_Surface *heart = loadImage("assets/heart.png");
     int enemies_number = 0;
-    int total_enemies_created = 0;
-    int j = 0;
 
-    // if (showMenu(window) != 0)
-    //     goto Quit;
+    // Font creation and heart image load.
+    TTF_Font *font = TTF_OpenFont("assets/Triforce.ttf", 24);
+    SDL_Surface *heart = loadImage("assets/heart.png");
+
+    if (showMenu(window) != 0)
+        goto Quit;
 
     // Main loop.
-    char map_name[50] = "main";
+    int i, j = 0;
     SDL_Event event;
-    for (int i = 0;;)
+    for (i = 0;;)
     {
         // Event management
         SDL_WaitEvent(&event);
@@ -153,10 +156,6 @@ int main(int argc, char **argv)
             break;
         }
 
-        // Font initialization.
-        SDL_Surface *coins_font = createFont("assets/Triforce.ttf", "%d coins", player->coins);
-        SDL_Surface *heart_font = createFont("assets/Triforce.ttf", "%d", player->health);
-
         // Render the map and the character.
         SDL_FillRect(window_surface, NULL, 0);
         renderMap(window_surface, map);
@@ -169,8 +168,10 @@ int main(int argc, char **argv)
                     renderCharacter(window_surface, enemies[j], map->tile_width, i, "normal");
             }
         }
-        renderHeartUI(heart_font, heart, window_surface);
-        renderCoinsUI(coins_font, window_surface);
+
+        // UI rendering.
+        renderCoinsUI(font, window_surface, player->coins);
+        renderHeartUI(font, heart, window_surface, player->health);
         SDL_UpdateWindowSurface(window);
         SDL_Delay(16);
 
@@ -199,7 +200,6 @@ int main(int argc, char **argv)
                             enemies[enemies_number] = createEnemy(k, j, 3, enemy_surface, rand() % 4 + 1);
                             enemies[enemies_number]->facing = LEFT;
                             enemies_number++;
-                            total_enemies_created++;
                         }
                     }
                 }
@@ -219,6 +219,7 @@ int main(int argc, char **argv)
         // Manage the random map event.
         if (player->x == 3 && player->y == 12 && strstr(map_name, "random") && enemies_number == 0)
         {
+            player->health = 5;
             changeMap(window, &map, "maps/main/map.txt", player, 10, 22);
             strcpy(map_name, "main");
         }
@@ -236,7 +237,6 @@ int main(int argc, char **argv)
             changeMap(window, &map, "maps/main/map.txt", player, 24, 23);
             strcpy(map_name, "main");
         }
-        SDL_FreeSurface(coins_font);
     }
 
 Quit:

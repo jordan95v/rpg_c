@@ -3,6 +3,8 @@
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
 
+SDL_Color COLOR_BLACK = {255, 255, 255};
+
 void raise(char *error)
 {
     printf("[ERROR] %s\n", error);
@@ -20,7 +22,7 @@ SDL_Surface *loadImage(char *filename)
 
 int showMenu(SDL_Window *window)
 {
-    SDL_Rect menu = {370, 250, 200, 50};
+    SDL_Rect menu = {1000, 250, 200, 50};
     SDL_Surface *backgroundMenu = loadImage("assets/menu.png");
     SDL_Surface *backgroundBtn = loadImage("assets/button.png");
 
@@ -73,33 +75,28 @@ int init(SDL_Window **window, int w, int h)
     return 0;
 }
 
-void renderCoinsUI(SDL_Surface *font, SDL_Surface *window)
+void renderCoinsUI(TTF_Font *font, SDL_Surface *window, int value)
 {
+    char text[15];
+    sprintf(text, "%d coins", value);
+    SDL_Surface *surface = TTF_RenderText_Solid(font, text, COLOR_BLACK);
     SDL_Rect text_rect;
-    text_rect.x = window->w - font->w - 10;
+    text_rect.x = window->w - surface->w - 10;
     text_rect.y = 10;
-    SDL_BlitSurface(font, NULL, window, &text_rect);
+    SDL_BlitSurface(surface, NULL, window, &text_rect);
+    SDL_FreeSurface(surface);
 }
 
-void renderHeartUI(SDL_Surface *font, SDL_Surface *heart, SDL_Surface *window)
+void renderHeartUI(TTF_Font *font, SDL_Surface *heart, SDL_Surface *window, int value)
 {
+    char text[15];
+    sprintf(text, "%d", value);
+    SDL_Surface *surface = TTF_RenderText_Solid(font, text, COLOR_BLACK);
     SDL_Rect text_rect;
-    text_rect.x = font->w;
+    text_rect.x = surface->w;
     text_rect.y = 10;
     SDL_BlitSurface(heart, NULL, window, &text_rect);
-    text_rect.x = heart->w + font->w * 2;
-    SDL_BlitSurface(font, NULL, window, &text_rect);
-}
-
-SDL_Surface *createFont(char *filename, char *format, int value)
-{
-    TTF_Font *font = TTF_OpenFont(filename, 24);
-    SDL_Color color = {255, 255, 255};
-    char text[20];
-
-    if (!font)
-        raise("Error initializing font.");
-
-    sprintf(text, format, value);
-    return TTF_RenderText_Solid(font, text, color);
+    text_rect.x = heart->w + surface->w * 2;
+    SDL_BlitSurface(surface, NULL, window, &text_rect);
+    SDL_FreeSurface(surface);
 }
