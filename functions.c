@@ -81,7 +81,17 @@ void renderCoinsUI(SDL_Surface *font, SDL_Surface *window)
     SDL_BlitSurface(font, NULL, window, &text_rect);
 }
 
-SDL_Surface *createCoinsFont(char *filename, int coins)
+void renderHeartUI(SDL_Surface *font, SDL_Surface *heart, SDL_Surface *window)
+{
+    SDL_Rect text_rect;
+    text_rect.x = font->w;
+    text_rect.y = 10;
+    SDL_BlitSurface(heart, NULL, window, &text_rect);
+    text_rect.x = heart->w + font->w * 2;
+    SDL_BlitSurface(font, NULL, window, &text_rect);
+}
+
+SDL_Surface *createFont(char *filename, char *format, int value)
 {
     TTF_Font *font = TTF_OpenFont(filename, 24);
     SDL_Color color = {255, 255, 255};
@@ -90,6 +100,6 @@ SDL_Surface *createCoinsFont(char *filename, int coins)
     if (!font)
         raise("Error initializing font.");
 
-    sprintf(text, "%d coins", coins);
+    sprintf(text, format, value);
     return TTF_RenderText_Solid(font, text, color);
 }

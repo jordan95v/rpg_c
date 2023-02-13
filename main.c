@@ -56,6 +56,7 @@ int main(int argc, char **argv)
 
     Entity **enemies = NULL;
     SDL_Surface *enemy_surface = loadImage("assets/enemy.png");
+    SDL_Surface *heart = loadImage("assets/heart.png");
     int enemies_number = 0;
     int total_enemies_created = 0;
     int j = 0;
@@ -151,8 +152,10 @@ int main(int argc, char **argv)
                 i = 0;
             break;
         }
+
         // Font initialization.
-        SDL_Surface *font = createCoinsFont("assets/Triforce.ttf", player->coins);
+        SDL_Surface *coins_font = createFont("assets/Triforce.ttf", "%d coins", player->coins);
+        SDL_Surface *heart_font = createFont("assets/Triforce.ttf", "%d", player->health);
 
         // Render the map and the character.
         SDL_FillRect(window_surface, NULL, 0);
@@ -166,7 +169,8 @@ int main(int argc, char **argv)
                     renderCharacter(window_surface, enemies[j], map->tile_width, i, "normal");
             }
         }
-        renderCoinsUI(font, window_surface);
+        renderHeartUI(heart_font, heart, window_surface);
+        renderCoinsUI(coins_font, window_surface);
         SDL_UpdateWindowSurface(window);
         SDL_Delay(16);
 
@@ -232,7 +236,7 @@ int main(int argc, char **argv)
             changeMap(window, &map, "maps/main/map.txt", player, 24, 23);
             strcpy(map_name, "main");
         }
-        SDL_FreeSurface(font);
+        SDL_FreeSurface(coins_font);
     }
 
 Quit:
@@ -245,7 +249,6 @@ Quit:
     freePlayer(player);
     for (j = 0; j < enemies_number; j++)
         freePlayer(enemies[j]);
-    // TODO: free enemies, get a count on all enemy created and free them.
     SDL_Quit();
     return 0;
 }
