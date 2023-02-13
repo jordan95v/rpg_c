@@ -24,9 +24,8 @@ Entity *createEntity(int x, int y, int health, char *filename)
     return entity;
 }
 
-Entity *createEnemy(int x, int y, int health, SDL_Surface *surface)
+Entity *createEnemy(int x, int y, int health, SDL_Surface *surface, int coins)
 {
-    srand(time(0));
     Entity *entity = NULL;
     entity = malloc(sizeof(Entity));
 
@@ -36,7 +35,7 @@ Entity *createEnemy(int x, int y, int health, SDL_Surface *surface)
     entity->tileset = surface;
     entity->facing = 0;
     entity->will_attack = 0;
-    entity->coins = (rand() % 4) + 1;
+    entity->coins = coins;
 
     return entity;
 }
@@ -90,14 +89,14 @@ void attack(Entity *attacker, Entity *victim)
         if (attacker->x + 1 == victim->x)
         {
             victim->health -= 1;
-            victim->x++;
+            victim->x += 2;
         }
 
     case LEFT:
         if (attacker->x - 1 == victim->x)
         {
             victim->health -= 1;
-            victim->x--;
+            victim->x -= 2;
         }
         break;
     }

@@ -22,13 +22,14 @@ void changeMap(SDL_Window *window, Map **map, char *filename, Entity *entity, in
         randMap(*map);
 }
 
-int remove_element(Entity **array, int n)
+int remove_element(Entity **array, int n, Entity *player)
 {
     int i, j;
     for (i = 0; i < n; i++)
     {
         if (array[i]->health == 0)
         {
+            player->coins += array[i]->coins;
             for (j = i; j < n - 1; j++)
             {
                 array[j] = array[j + 1];
@@ -56,10 +57,8 @@ int main(int argc, char **argv)
     Entity **enemies = NULL;
     SDL_Surface *enemy_surface = loadImage("assets/enemy.png");
     int enemies_number = 0;
+    int total_enemies_created = 0;
     int j = 0;
-
-    // Font initialization.
-    SDL_Surface *font = createCoinsFont("assets/Triforce.ttf", player->coins);
 
     // if (showMenu(window) != 0)
     //     goto Quit;
@@ -122,7 +121,7 @@ int main(int argc, char **argv)
                 for (j = 0; j < enemies_number; j++)
                 {
                     attack(player, enemies[j]);
-                    enemies_number = remove_element(enemies, enemies_number);
+                    enemies_number = remove_element(enemies, enemies_number, player);
                 }
                 break;
             }
@@ -152,8 +151,11 @@ int main(int argc, char **argv)
                 i = 0;
             break;
         }
+        // Font initialization.
+        SDL_Surface *font = createCoinsFont("assets/Triforce.ttf", player->coins);
 
         // Render the map and the character.
+        SDL_FillRect(window_surface, NULL, 0);
         renderMap(window_surface, map);
         renderCharacter(window_surface, player, map->tile_width, i, "normal");
         if (enemies != NULL)
@@ -190,9 +192,10 @@ int main(int argc, char **argv)
                                 raise("Error while generating enemies.");
                                 goto Quit;
                             }
-                            enemies[enemies_number] = createEnemy(k, j, 3, enemy_surface);
+                            enemies[enemies_number] = createEnemy(k, j, 3, enemy_surface, rand() % 4 + 1);
                             enemies[enemies_number]->facing = LEFT;
                             enemies_number++;
+                            total_enemies_created++;
                         }
                     }
                 }
@@ -229,6 +232,7 @@ int main(int argc, char **argv)
             changeMap(window, &map, "maps/main/map.txt", player, 24, 23);
             strcpy(map_name, "main");
         }
+        SDL_FreeSurface(font);
     }
 
 Quit:
@@ -239,6 +243,9 @@ Quit:
     // Free the map struct and exit gracefully.
     freeMap(map);
     freePlayer(player);
+    for (j = 0; j < enemies_number; j++)
+        freePlayer(enemies[j]);
+    // TODO: free enemies, get a count on all enemy created and free them.
     SDL_Quit();
     return 0;
 }
