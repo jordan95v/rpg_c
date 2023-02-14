@@ -7,4 +7,5 @@ int showMenu(SDL_Window *window);
 SDL_Surface *createFont(char *filename, char *format, int value);
 void renderCoinsUI(TTF_Font *font, SDL_Surface *window, int value);
 void renderHeartUI(TTF_Font *font, SDL_Surface *heart, SDL_Surface *window, int value);
+void renderKeyUI(SDL_Surface *window, SDL_Surface *surface);
 int gameOver(SDL_Surface *window, TTF_Font *font);

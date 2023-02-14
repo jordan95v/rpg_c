@@ -11,6 +11,7 @@ typedef struct
     int facing;
     int will_attack;
     int coins;
+    int have_key;
 } Entity;
 
 void renderCharacter(SDL_Surface *window, Entity *character, int size, int shift, char *mode);

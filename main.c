@@ -10,6 +10,7 @@
 
 #define RIGHT 0
 #define LEFT 8
+#define KEY_COST 50
 
 void changeMap(SDL_Window *window, Map **map, char *filename, Entity *entity, int x, int y)
 {
@@ -64,15 +65,16 @@ int main(int argc, char **argv)
     TTF_Font *font = TTF_OpenFont("assets/Triforce.ttf", 24);
     SDL_Surface *heart = loadImage("assets/heart.png");
     SDL_Surface *store = loadImage("assets/store.png");
+    SDL_Surface *key = loadImage("assets/key.png");
 
     // Show the menu.
     if (showMenu(window) != 0)
         goto Quit;
+    int buyed = 0;
 
 Main:
     // Main loop.
     int i, j = 0;
-    int buyed = 0;
     SDL_Event event;
     for (i = 0;;)
     {
@@ -131,6 +133,12 @@ Main:
                     attack(player, enemies[j]);
                 }
                 enemies_number = remove_element(enemies, enemies_number, player);
+                if (player->have_key && player->x == 18 && player->y == 2)
+                {
+                    system("open assets/c.pdf");
+                    map->layers[3].schema[18][1] = 416;
+                    map->layers[3].schema[18][0] = 400;
+                }
                 break;
             }
 
@@ -176,6 +184,8 @@ Main:
         // UI rendering.
         renderCoinsUI(font, window_surface, player->coins);
         renderHeartUI(font, heart, window_surface, player->health);
+        if (player->have_key)
+            renderKeyUI(window_surface, key);
         SDL_UpdateWindowSurface(window);
         SDL_Delay(16);
 
@@ -251,11 +261,10 @@ Main:
             }
             else if ((player->x == 13 || player->x == 14) && player->y == 7)
             {
-                SDL_BlitSurface(store, NULL, window_surface, NULL);
-                SDL_UpdateWindowSurface(window);
-
                 if (buyed == 0)
                 {
+                    SDL_BlitSurface(store, NULL, window_surface, NULL);
+                    SDL_UpdateWindowSurface(window);
 
                     while (1)
                     {
@@ -271,8 +280,12 @@ Main:
                             switch (event.key.keysym.sym)
                             {
                             case SDLK_o:
-                                printf("hello\n");
-                                buyed = 1;
+                                if (player->coins >= KEY_COST)
+                                {
+                                    buyed = 1;
+                                    player->have_key = 1;
+                                    player->coins -= KEY_COST;
+                                }
                                 player->y++;
                                 goto Main;
                             case SDLK_n:
@@ -322,6 +335,7 @@ Quit:
     TTF_CloseFont(font);
     SDL_FreeSurface(store);
     SDL_FreeSurface(heart);
+    SDL_FreeSurface(key);
     for (j = 0; j < enemies_number; j++)
         freePlayer(enemies[j]);
     SDL_Quit();

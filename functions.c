@@ -95,9 +95,17 @@ void renderHeartUI(TTF_Font *font, SDL_Surface *heart, SDL_Surface *window, int 
     text_rect.x = surface->w;
     text_rect.y = 10;
     SDL_BlitSurface(heart, NULL, window, &text_rect);
-    text_rect.x = heart->w + surface->w * 2;
+    text_rect.x = heart->w + 20;
     SDL_BlitSurface(surface, NULL, window, &text_rect);
     SDL_FreeSurface(surface);
+}
+
+void renderKeyUI(SDL_Surface *window, SDL_Surface *surface)
+{
+    SDL_Rect dest;
+    dest.x = surface->w + 70;
+    dest.y = 10;
+    SDL_BlitSurface(surface, NULL, window, &dest);
 }
 
 void gameOver(SDL_Surface *window, TTF_Font *font)

@@ -17,9 +17,8 @@ Entity *createEntity(int x, int y, int health, char *filename)
     entity->y = y;
     entity->health = health;
     entity->tileset = loadImage(filename);
-    entity->facing = 0;
-    entity->will_attack = 0;
     entity->coins = 0;
+    entity->have_key = 0;
 
     return entity;
 }
@@ -33,8 +32,6 @@ Entity *createEnemy(int x, int y, int health, SDL_Surface *surface, int coins)
     entity->y = y;
     entity->health = health;
     entity->tileset = surface;
-    entity->facing = 0;
-    entity->will_attack = 0;
     entity->coins = coins;
 
     return entity;
