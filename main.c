@@ -3,6 +3,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_mixer.h>
 #include <string.h>
 #include <time.h>
 #include "player.h"
@@ -71,6 +72,14 @@ int main(int argc, char **argv)
     if (showMenu(window) != 0)
         goto Quit;
     int buyed = 0;
+
+    // Chargement du fichier son
+    Mix_Music *musique = Mix_LoadMUS("assets/music.mp3");
+    if (musique == NULL)
+        raise("Erreur lors du chargement de la musique.");
+    Mix_VolumeMusic(10);
+    // Lecture de la musique
+    Mix_PlayMusic(musique, -1);
 
 Main:
     // Main loop.
@@ -336,8 +345,12 @@ Quit:
     SDL_FreeSurface(store);
     SDL_FreeSurface(heart);
     SDL_FreeSurface(key);
+    // Libération de la musique
+    Mix_FreeMusic(musique);
+    Mix_CloseAudio();
     for (j = 0; j < enemies_number; j++)
         freePlayer(enemies[j]);
+    // Fermeture de SDL_mixer
     SDL_Quit();
     return 0;
 }

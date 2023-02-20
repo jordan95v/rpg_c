@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_mixer.h>
 
 SDL_Color COLOR_BLACK = {255, 255, 255};
 
@@ -68,6 +69,10 @@ int init(SDL_Window **window, int w, int h)
     // Init the TTF
     if (TTF_Init() < 0)
         raise("Error initializing sdl-ttf");
+
+    // Initialisation de SDL_mixer
+    if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
+        raise("Erreur d'initialisation de SDL_mixer");
 
     // Create the window.
     *window = SDL_CreateWindow("Zelda Game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, w, h, SDL_WINDOW_SHOWN);
